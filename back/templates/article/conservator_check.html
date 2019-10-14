@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>无标题文档</title>
+    <link href="/static/back/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/back/css/select.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/static/back/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/back/js/jquery.idTabs.min.js"></script>
+    <script type="text/javascript" src="/static/back/js/select-ui.min.js"></script>
+
+    <script src="/static/layer/layer.js"></script>
+    <script type="text/javascript" src="/static/plupload/moxie.js"></script>
+    <script type="text/javascript" src="/static/plupload/plupload.min.js"></script>
+
+    <script type="text/javascript" src="/static/back/kindeditor/kindeditor-all.js"></script>
+
+    {#导入plupload的js 用于编写多图片上传功能#}
+    <script type="text/javascript" src="/static/plupload/moxie.js"></script>
+    <script type="text/javascript" src="/static/plupload/plupload.min.js"></script>
+
+    {#引入时间插件#}
+    <script type="text/javascript" src="/static/laydate/laydate.js"></script>
+
+{# 引入三级联动插件#}
+    <script type="text/javascript" src="/static/cxSelect/jquery.cxselect.min.js"></script>
+    <script>
+        KindEditor.ready(function (K) {
+            window.editor = K.create('#content', {
+                width: '800', {# 副文本编辑器的宽度 #}
+                height: '600', {# 副文本编辑器的高度 #}
+                resizeType: 0, {# 调整大小类型 #}
+                uploadJson: '/back/article/upload/', {# 文件上传的路径函数 #}
+                extraFileUploadParams: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}"
+                },
+                filePostName: "upload_img"//上传图片的名称
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function (e) {
+            $(".select1").uedSelect({
+                width: 345
+            });
+            $(".select2").uedSelect({
+                width: 167
+            });
+            $(".select3").uedSelect({
+                width: 100
+            });
+        });
+
+    </script>
+</head>
+
+<body>
+    <div class="place">
+        <span>位置：</span>
+        <ul class="placeul">
+            <li><a href="#">首页</a></li>
+            {% if conservator_obj %}
+            <li><a href="#">管理员信息</a></li>
+            {% elif member_obj %}
+            <li><a href="#">用户信息</a></li>
+            {% elif article_check %}
+            <li><a href="#">文章详情信息</a></li>
+            {% elif comment_check %}
+            <li><a href="#">评论信息</a></li>
+            {% elif word_list %}
+            <li><a href="#">留言信息</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <div class="formbody">
+        <div id="usual1" class="usual">
+            <div id="tab1" class="tabson">
+                <ul class="forminfo">
+                    {# 管理员信息 开始#}
+                    {% if conservator_obj %}
+                    <li><label>用户名<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ conservator_obj.conservator_name }}</span></li>
+                    <li><label>联系方式<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ conservator_obj.conservator_tel }}</span></li>
+                    <li><label>邮箱<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ conservator_obj.conservator_email }}</span></li>
+                     <li><label>家庭住址<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ conservator_obj.conservator_province }}{{ conservator_obj.conservator_city }}{{ conservator_obj.conservator_area }}</span></li>
+                     <li><label>创建时间<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ conservator_obj.conservator_addtime }}</span></li>
+                    {% endif %}
+                     {# 管理员信息 结束#}
+
+                     {# 用户信息 开始#}
+                    {% if member_obj %}
+                    <li><label>用户名<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ member_obj.member_name }}</span></li>
+                    <li><label>联系方式<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ member_obj.member_tel }}</span></li>
+                    <li><label>邮箱<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ member_obj.member_email }}</span></li>
+                     <li><label>昵称<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ member_obj.member_nickname }}</span></li>
+                    {% endif %}
+                    {# 用户信息 结束#}
+                    {#文章查看 开始#}
+                    {% if article_check %}
+                        <li><label>标题<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ article_check.article_title }}</span></li>
+                    <li><label>简介<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ article_check.article_description }}</span></li>
+                    <li><label>发布时间<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ article_check.article_addtime }}</span></li>
+                     <li><label>作者<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ article_check.membered.member_nickname }}</span></li>
+                     <li><label>点击量<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ article_check.article_clicknum }}</span></li>
+                     <li><label>点赞量<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ article_check.article_praise_num }}</span></li>
+                     <li><label>发布内容<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ article_check.article_content|safe }}</span></li>
+                    {% endif %}
+                    {#文章查看 结束#}
+                    {#评论查看 开始#}
+                    {% if comment_check %}
+                         <li><label>评论用户名<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ comment_check.member.member_nickname }}</span></li>
+                    <li><label>评论的文章<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ comment_check.article.article_title }}</span></li>
+                    <li><label>评论的时间<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ comment_check.comment_addtime }}</span></li>
+                     <li><label>评论的内容<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ comment_check.comment_content }}</span></li>
+{#                     <li><label>其他评论<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ comment_check.comment_content }}</span></li>#}
+                    {% endif %}
+                    {#评论查看 结束#}
+                    {#留言查看 开始#}
+                    {% if word_list %}
+                         <li><label>留言用户名<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ word_list.word_name }}</span></li>
+                    <li><label>留言时间<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ word_list.word_addtime }}</span></li>
+                    <li><label>留言头像<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px"><img
+                            src="{{ word_list.word_img }}" alt="留言头像"></span></li>
+                     <li><label>留言内容<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ word_list.word_content }}</span></li>
+{#                     <li><label>其他评论<b>*</b></label><span style="display:inline-block;height: 34px;line-height: 34px">{{ comment_check.comment_content }}</span></li>#}
+                    {% endif %}
+                    {#留言查看 结束#}
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

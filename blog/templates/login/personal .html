@@ -1,0 +1,214 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>个人中心</title>
+    <meta name="keywords" content=""/>
+    <meta name="description" content="	"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/css/base.css" rel="stylesheet">
+    <link href="/static/css/index.css" rel="stylesheet">
+    <link href="/static/css/m.css" rel="stylesheet">
+    <script src="/static/js/jquery-1.8.2.js"></script>
+    <script src="/static/layer/layer.js"></script>
+    <!--[if lt IE 9]>
+    <script src="js/modernizr.js"></script>
+    <![endif]-->
+</head>
+<body>
+<header>
+    <div id="mnav">
+        <div class="logo"><a href="index.html">博客天下</a></div>
+        <h2 id="mnavh"><span class="navicon"></span></h2>
+        <ul id="starlist">
+            <li class=""><a href="{% url "blog:index" %}">网站首页</a></li>
+
+            <li class=""><a href="{% url "blog:about" %}">关于网站</a></li>
+
+
+            <li class=""><a href="{% url "blog:diary" %}">博客列表</a></li>
+
+
+            <li class=""><a href="{% url "blog:publish" %}">文章发布</a></li>
+
+            <li class=""><a href="{% url 'blog:gbook' %}">留言</a></li>
+            {% if member_id %}
+            <li class=""><a href="{% url "blog:personal"%}">{{ member_obj.member_nickname  }}</a></li>
+            <li class=""><a href="{% url 'blog:logout_auth' %}">退出</a></li>
+            {% endif %}
+
+        </ul>
+    </div>
+    <script>
+        window.onload = function () {
+            var oH2 = document.getElementById("mnavh");
+            var oUl = document.getElementById("starlist");
+            oH2.onclick = function () {
+                var style = oUl.style;
+                style.display = style.display == "block" ? "none" : "block";
+                oH2.className = style.display == "block" ? "open" : ""
+            }
+            var obj = null;
+            var As = document.getElementById('starlist').getElementsByTagName('a');
+            obj = As[0];
+            for (i = 1; i < As.length; i++) {
+                if (window.location.href.indexOf(As[i].href) >= 0)
+                    obj = As[i];
+            }
+            obj.id = 'selected'
+        }
+    </script>
+</header>
+<div class="line46"></div>
+<div class="blank"></div>
+<article>
+    <div class="leftbox">
+        <div class="infos">
+            <div class="newsview">
+                <h2 class="intitle">您现在的位置是：<a href="javascript:;">首页</a>&nbsp;>&nbsp;<a href="javascript:;">个人中心</a></h2>
+                 <div class="aboutme">
+            <h2 class="ab_title">个人中心</h2>
+            <div class="avatar"><img src="/static/picture/b04.jpg"/></div>
+
+            <div class="ab_con">
+                <p>用&nbsp;&nbsp;户&nbsp;&nbsp;名：{{ member_obj.member_name }}</p>
+                <p>联系方式：{{ member_obj.member_tel  }}</p>
+                <p>邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱：{{ member_obj.member_email }}</p>
+                <p>昵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：{{ member_obj.member_nickname }}</p>
+                <p><a href="javascript:;" id="up_button">修改个人资料</a></p>
+                <form action="" id="up_personal" style="display: none" method="post">
+                    {% csrf_token %}
+                <h2 class="ab_title">修改资料</h2>
+{#                <p>用&nbsp;&nbsp;户&nbsp;&nbsp;名：<input type="text" value="{{ member_obj.member_name }}" style="display: inline-block;width:180px;height:25px; font-size: 15px; line-height: 25px;" name="username"></p>#}
+                <p>联系方式：<input type="text" value="{{ member_obj.member_tel  }}" style="display: inline-block;width:180px;height:25px; font-size: 15px; line-height: 25px;" name="tel"></p>
+                <p>邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱：<input type="text" value="{{ member_obj.member_email }}" style="display: inline-block;width:180px;height:25px; font-size: 15px; line-height: 25px;" name="email"></p>
+                <p>昵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：<input type="text" value="{{ member_obj.member_nickname }}" style="display: inline-block;width:180px;height:25px; font-size: 15px; line-height: 25px;" name="nickname"></p>
+                <p><input type="button" value="保存" style="display: inline-block;width: 100px;height: 30px;cursor: pointer;float:right;" id="dosubmit"></p>
+                </form>
+
+            </div>
+            <h2 class="ab_title"><a href="{% url "blog:person_core" %}">我的文章</a></h2>
+            <ul>
+    {% for v in article_obj %}
+    <li>
+        <h3 class="blogtitle"><a href="{% url 'blog:text' v.article_id %}" target="_blank">{{ v.article_title }}</a></h3>
+        <div class="bloginfo"><span class="blogpic"><a href="{% url "blog:text" v.article_id %}" title="{{ v.article_title }}"><img
+                src="{{ v.article_img }}" alt="{{ v.article_title }}"/></a></span><p>{{ v.article_description }}</p>
+        </div>
+        <div class="autor">
+            <span class="lm f_l"><a href="#" title="{{ v.membered.member_nickname }}" target="_blank" class="classname">{{ v.membered.member_nickname }}</a></span>
+            <span class="dtime f_l">{{ v.article_addtime }}</span>
+            <span class="viewnum f_l">浏览（<a href="javascript:;">{{ v.article_clicknum }}</a>）</span>
+            <span class="pingl f_l">喜欢（{{ v.article_praise_num }}）</span>
+            <span data-id="{{ v.article_id }}"><a href="javascript:;" id="del">删除</a></span>
+            <span data-id="{{ v.article_id }}"><a href="{% url "blog:person_update" v.article_id %}" id="article_update" target="_blank">修改</a></span>
+            <span><input type="hidden" value="1" name="update_id"></span>
+            <span class="f_r"><a href="{% url 'blog:text' v.article_id %}" class="more">阅读原文>></a></span>
+        </div>
+    </li>
+    {% endfor %}
+            </ul>
+        </div>
+            </div>
+        </div>
+    </div>
+    <div class="rightbox">
+        <div class="paihang" style="margin-top:-20px;">
+            <h2 class="ab_title"><a href="javascript:;">最近发布</a></h2>
+            <ul>
+                {% for v in article_obj01 %}
+                <li><b><a href="{% url "blog:text" v.article_id %}" target="_blank">{{ v.article_title }}</a></b>
+                    <p><i><a href="{% url "blog:text" v.article_id %}" title="{{ v.article_title }}"><img
+                            src="{{ v.article_img }}" alt="{{ v.article_title }}"/></a></i>{{ v.article_description|truncatechars:50 }}
+                    </p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+{#        <div class="weixin">#}
+{#            <h2 class="ab_title">友情链接</h2>#}
+{#            <ul>#}
+{#                <img src="/static/picture/weixin.jpg">#}
+{#            </ul>#}
+{#        </div>#}
+    </div>
+</article>
+<footer>
+    <p>Design by <a href="javascript:;">博客天下</a> <a href="javascript:;">津ICP备11002373号-1</a></p>
+</footer>
+</body>
+<script>
+    $('#up_button').hover(
+        function () {
+       $(this).css({'color':'#e68346',})
+
+    },
+    function () {
+    $(this).css("color","#000");
+  }
+    );
+    $('#up_button').click(function () {
+        $('#up_personal').slideToggle();
+    });
+
+    $('#dosubmit').click(function () {
+       var nickname = $('input[name="nickname"]').val();
+       var tel = $('input[name="tel"]').val();
+       var email = $('input[name="email"]').val();
+       if(tel == ''){
+           layer.msg('联系方式不能为空');
+           return false;
+       }else if(email == ''){
+            layer.msg('邮箱不能为空');
+           return false;
+       }else if(nickname == ''){
+            layer.msg('昵称不能为空');
+           return false;
+       }
+       $.post('{% url "blog:personal" %}',{
+       'nickname':nickname,
+       'tel':tel,
+       'email':email,
+       "csrfmiddlewaretoken":"{{ csrf_token }}",
+       },function(data){
+           console.log(data);
+           if(data.status =='1'){
+              layer.msg(data.info,function () {
+                  parent.location.reload();
+                  return false;
+              })
+           }else{
+               layer.msg(data.info);
+               return false;
+           }
+
+       },'json');
+    });
+    {#点击删除按钮开始#}
+    $(document).on('click','#del',function () {
+       _this = this;
+       layer.confirm('您确定删除吗？',{
+           btn:['确定',"取消"]
+       },function () {
+          id = $(_this).parent().data('id');
+          console.log(id);
+          $.post('{% url "blog:person_del" %}',{
+              "id":id,
+              "csrfmiddlewaretoken": "{{ csrf_token }}"
+          },function (data) {
+             if(data['status'] == 1){
+                 layer.msg(data.info,function () {
+                    $(_this).parents('li').remove();
+                 });
+             }else {
+                 layer.msg(data.info);
+             }
+          },'json');
+       },
+           function () {
+       });
+       return false;
+    });
+    {#点击删除按钮结束#}
+</script>
+</html>

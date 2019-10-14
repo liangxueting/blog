@@ -1,0 +1,44 @@
+{#循环遍历主要内容 开始#}
+{% for v in member_list %}
+<tr>
+    <td><input name="" type="checkbox" value=""/></td>
+    <td>{{ forloop.counter }}</td>   {# 编号 #}
+    <td>{{ v.member_name }}</td>
+    <td>{{ v.member_tel }}</td>
+    <td>{{ v.member_email }}</td>
+    <td>{{ v.member_nickname}}</td>
+    <td data-id="{{ v.member_id }}"><a href="{% url "back:article/user_list_check/" v.member_id %}" class="tablelink">查看</a> <a href="javascript:;" class="tablelink del"> 删除</a></td>
+</tr>
+{% endfor %}
+{#循环遍历主要内容 结束#}
+{#分页器 开始#}
+
+<tr><td colspan="7">  <div class="pagin">
+<div class="message">共<i class="blue">&nbsp;{{ Sum.member_id__count }}&nbsp;</i>条记录，当前显示第&nbsp;
+    {% for num0 in pageRange %}
+    <i class="blue">{% if num0 == currentPage %}{{ num0 }}{% endif %}</i>
+    {% endfor %}
+    页</div>
+<ul class="paginList">
+
+     {% if member_list.has_previous %}
+                    <li class="paginItem"><a
+                            href="/back/article/user_list_part/?page={{ member_list.previous_page_number }}">
+                        <span class="pagepre"></span></a></li>
+                {% endif %}
+
+
+    {% for num in pageRange %}
+                    <li class="paginItem {% if num == currentPage %}current{% endif %}"><a
+                            href="/back/article/user_list_part/?page={{ num }}">{{ num }}</a></li>
+                {% endfor %}
+
+
+    {% if member_list.has_next %}
+                    <li class="paginItem"><a
+                            href="/back/article/user_list_part/?page={{ member_list.next_page_number }}"><span
+                            class="pagenxt"></span></a></li>
+                {% endif %}
+</ul>
+{#分页器 结束#}
+</div></td></tr>

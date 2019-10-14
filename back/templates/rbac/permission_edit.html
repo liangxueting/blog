@@ -1,0 +1,31 @@
+<script type="text/javascript" src="/static/back/js/jquery.js"></script>
+<script type="text/javascript" src="/static/layer/layer.js"></script>
+{% load my_tags %}
+<h3>添加一级菜单</h3>
+<form action="">
+    {% csrf_token %}
+    <div>名称：<input type="text" name="permission_name" value="{{ permission_obj.permission_name }}"></div>
+    <div>
+        对应菜单：
+        <select name="menu_id">
+        <option value="">请选择</option>
+        {% for row in menu_QuerySet %}
+        <option value="{{ row.id }}"  {% if row.id|safe == mid %} selected="true"{% endif %}>{{ row.menu_name }}</option>
+        {% endfor %}
+    </select>
+    </div>
+    <input type="button" name="dosubmit" id="dosubmit" value="保存">
+</form>
+<script>
+    $('#dosubmit').click(function () {
+       $.post('{% url "back:permission_edit" mid=mid %}',$('form').serialize(),function(data){
+            if(data.status==1){
+                layer.msg(data.info,function () {
+                   location.href = '{% url "back:permission_list" %}'
+                });
+            }else {
+                layer.msg(data.info)
+            }
+       },'json') ;
+    });
+</script>

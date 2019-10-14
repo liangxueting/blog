@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>列表页</title>
+    <link href="/static/back/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/back/css/select.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/static/back/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/back/js/jquery.idTabs.min.js"></script>
+    <script type="text/javascript" src="/static/back/js/select-ui.min.js"></script>
+{#    layer弹框#}
+    <script type="text/javascript" src="/static/layer/layer.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function (e) {
+            $(".select1").uedSelect({
+                width: 345
+            });
+            $(".select2").uedSelect({
+                width: 167
+            });
+            $(".select3").uedSelect({
+                width: 100
+            });
+        });
+    </script>
+
+</head>
+
+<body>
+
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="#">首页</a></li>
+        <li><a href="#">文章列表</a></li>
+    </ul>
+</div>
+
+<div class="formbody">
+    <div id="usual1" class="usual">
+        <div id="tab2" class="tabson">
+            <form id="seek_form">
+                {% csrf_token %}
+            <ul class="seachform">
+
+                <li><label>标题</label><input name="article_title" type="text" class="scinput"/></li>
+                <li><label>是否推荐</label>
+                    <div class="vocation">
+                        <select class="select3" name="article_is_recommend">
+                            <option value="">请选择</option>
+                            <option value="1">推荐</option>
+                            <option value="0">不推荐</option>
+                        </select>
+                    </div>
+                </li>
+
+                <li><label>作者</label>
+                    <div class="vocation">
+                        <select class="select3" name="member_id">
+                            <option value="">请选择</option>
+                            {% for v in member_list %}
+                            <option value="{{ v.member_id }}">{{ v.member_nickname }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </li>
+
+                <li><label>&nbsp;</label><input name="" type="button" class="scbtn" value="查询" id="search"/></li>
+
+            </ul>
+            </form>
+            <form action="" id="articleForm">
+            <table class="tablelist">
+                <thead>
+                <tr>
+                    <th><input name="allcheck" type="checkbox" value=""/></th>
+                    <th>编号<i class="sort"><img src="/static/back/images/px.gif"/></i></th>
+                    <th>文章标题</th>
+                    <th>发布时间</th>
+                    <th>点击量</th>
+                    <th>点赞量</th>
+                    <th>是否推荐</th>
+                    <th>作者</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody class="maina">
+                </tbody>
+            </table>
+            </form>
+
+
+
+        </div>
+
+    </div>
+
+{#    <script type="text/javascript">#}
+{#        $("#usual1 ul").idTabs();#}
+{#    </script>#}
+{##}
+{#    <script type="text/javascript">#}
+{#        $('.tablelist tbody tr:odd').addClass('odd');#}
+{#    </script>#}
+
+</div>
+
+
+</body>
+<script>
+    {#首次加载内容,通过ajax拿到数据 放到定义的maina标签中 开始#}
+    show_list();
+    function show_list() {
+        $.post('{% url "back:article/list_part/" %}',$('#seek_form').serialize(),function(data){
+            {#console.log(data);#}
+        $('.maina').html(data)
+        });
+    }
+    {#首次加载 结束#}
+    {#点击a链接失效并获取a链接中的路径传入ajax中提交，再次跳转#}
+    $(document).on('click','.paginItem a',function () {
+        $.post(this.href,$('#seek_form').serialize(),function (data) {
+           $('.maina').html(data)
+        });
+        return false;  //让a链接失效
+    });
+    {#点击a链接 结束#}
+    {#点击删除按钮开始#}
+    $(document).on('click','.del',function () {
+       _this = this;
+       layer.confirm('您确定删除吗？',{
+           btn:['确定',"取消"]
+       },function () {
+          id = $(_this).parent().data('id');
+          $.post('{% url "back:article/list_delete/" %}',{
+              "id":id,
+              "csrfmiddlewaretoken": "{{ csrf_token }}"
+          },function (data) {
+             if(data['status'] == 1){
+                 layer.msg(data.info,function () {
+                    $(_this).parent().parent().remove();
+                 });
+             }else {
+                 layer.msg(data.info);
+             }
+          },'json');
+       },
+           function () {
+       });
+       return false;
+    });
+    {#点击删除按钮结束#}
+    {#查询操作开始#}
+    $(document).on('click','#search',function () {
+        show_list();
+
+    });
+    {#查询结束#}
+
+    {#全选全部选 开始#}
+    $('input[name="allcheck"]').click(function() {
+        $('input[name="chedel[]"]').prop('checked', $(this).prop('checked'));
+    });
+    {#复选框 开始#}
+    $(document).on('click','input[name="chedel[]"]',function () {
+         $('input[name="allcheck"]').prop('checked',!$('input[name="chedel[]"]:not(:checked)').length);
+
+    });
+     {#复选框 结束#}
+    {#全选全部选 结束#}
+
+    {#提交按钮批量删除 开始#}
+    console.log($('#articleForm').serialize());
+    $(document).on('click','#alldel',function () {
+        _this = this;
+        var ckeck = $('input[name="chedel[]"]').prop('checked');
+        console.log(ckeck);
+        layer.confirm('您确定删除吗？',{
+           btn:['确定',"取消"]
+        },function () {
+          $.get('{% url "back:article/list_alldel/" %}',$('#articleForm').serialize()
+          ,function (data) {
+             if(data['status'] == 1){
+                 layer.msg(data.info,function () {
+                     $('input[name="chedel[]"]:checked').parents('tr').remove();
+                 });
+             }else {
+                 layer.msg(data.info);
+             }
+          },'json');
+       },
+           function () {
+       });
+       return false;
+    });
+
+    {#提交按钮批量删除 结束#}
+
+</script>
+
+</html>

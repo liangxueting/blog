@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>无标题文档</title>
+    <link href="/static/back/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/back/css/select.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/static/back/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/back/js/jquery.idTabs.min.js"></script>
+    <script type="text/javascript" src="/static/back/js/select-ui.min.js"></script>
+
+    <script src="/static/layer/layer.js"></script>
+    <script type="text/javascript" src="/static/plupload/moxie.js"></script>
+    <script type="text/javascript" src="/static/plupload/plupload.min.js"></script>
+
+    <script type="text/javascript" src="/static/back/kindeditor/kindeditor-all.js"></script>
+
+    {#导入plupload的js 用于编写多图片上传功能#}
+    <script type="text/javascript" src="/static/plupload/moxie.js"></script>
+    <script type="text/javascript" src="/static/plupload/plupload.min.js"></script>
+
+    {#引入时间插件#}
+    <script type="text/javascript" src="/static/laydate/laydate.js"></script>
+
+{# 引入三级联动插件#}
+    <script type="text/javascript" src="/static/cxSelect/jquery.cxselect.min.js"></script>
+    <script>
+        KindEditor.ready(function (K) {
+            window.editor = K.create('#content', {
+                width: '800', {# 副文本编辑器的宽度 #}
+                height: '600', {# 副文本编辑器的高度 #}
+                resizeType: 0, {# 调整大小类型 #}
+                uploadJson: '/back/article/upload/', {# 文件上传的路径函数 #}
+                extraFileUploadParams: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}"
+                },
+                filePostName: "upload_img"//上传图片的名称
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function (e) {
+            $(".select1").uedSelect({
+                width: 345
+            });
+            $(".select2").uedSelect({
+                width: 167
+            });
+            $(".select3").uedSelect({
+                width: 100
+            });
+        });
+
+    </script>
+</head>
+
+<body>
+<form action="" method="post">
+    {% csrf_token %}
+    <div class="place">
+        <span>位置：</span>
+        <ul class="placeul">
+            <li><a href="#">首页</a></li>
+            <li><a href="#">添加管理员</a></li>
+        </ul>
+    </div>
+
+    <div class="formbody">
+        <div id="usual1" class="usual">
+            <div id="tab1" class="tabson">
+                <ul class="forminfo">
+                    <li><label>用户名<b>*</b></label><input name="username" type="text" class="dfinput" value="" placeholder="用户名" style="width:200px;"/></li>
+                    <li><label>密码<b>*</b></label><input name="pwd" type="password" class="dfinput" value="" placeholder="密码" style="width:200px;"/></li>
+                    <li><label>联系方式<b>*</b></label><input name="tel" type="text" class="dfinput" value="" placeholder="联系方式" style="width:200px;"/></li>
+                    <li><label>邮箱<b>*</b></label><input name="email" type="text" class="dfinput" value="" placeholder="邮箱" style="width:200px;"/></li>
+
+                    <li><label>家庭住址<b>*</b></label><div id="test" class="vocation">
+        <select class="province select1" name="province" data-value="" data-first-title="-------选择省" disabled="disabled" style="width:80px;" >
+{#            <option value="yunhe">云和</option>#}
+        </select>
+        <select class="city select1" name="city" data-value="" data-first-title="选择市" disabled="disabled"></select>
+        <select class="area select1" name="area" data-value="" data-first-title="选择地区" disabled="disabled"></select>
+                    </div>
+                    </li>
+                    <li><label>添加时间<b>*</b></label><input name="time" type="text" class="dfinput" placeholder="请选择日期" style="width:150px;" id="test1"/></li>
+                    <li><label>角色身份<b>*</b></label>
+                     <div>
+                        {% for v in role_obj %}
+                            <label style="width: -86px; line-height: -34px;float: none;display: inline ;font-size: 14px;">{{ v.role_name }}</label>
+                        <input type="checkbox" name="role[]" value="{{ v.id }}">
+                        {% endfor %}
+                    </div>
+                    </li>
+                    <li><label>&nbsp;</label><input name="dosubmit" type="button" class="btn" value="创建" id="dosubmit"/></li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</form>
+</body>
+{#引入js时间插件的代码块#}
+<script>
+    //执行一个laydate实例
+laydate.render({
+  elem: '#test1', //指定元素
+  type: 'datetime'
+});
+
+{#三级联动插件代码块#}
+ $('#test').cxSelect({
+        url : '/static/cxSelect/cityData.min.json',  //联动json数据
+        selects: ['province', 'city', 'area'],          //select框对应class
+        nodata: 'none'                                  //无子类别时不显示下拉框
+    });
+    $(document).on('click','#dosubmit',function () {
+        var username = $('input[name="username"]').val();
+        var pwd = $('input[name="pwd"]').val();
+        var tel = $('input[name="tel"]').val();
+        var email = $('input[name="email"]').val();
+        var province = $('select[name="province"]').val();
+        var city = $('select[name="city"]').val();
+        var area = $('select[name="area"]').val();
+        var time = $('input[name="time"]').val();
+        var role = $('input[name="role[]"]').val();
+        {#console.log(province,city,area);#}
+        {#console.log(time);#}
+        if (username=='' || pwd==""){
+            layer.msg('用户名或密码不能为空');
+            return false
+        }else if(tel ==''){
+            layer.msg('联系方式不能为空');
+            return false
+        }
+        $.post('{% url "back:article/conservator_add/" %}',$('form').serialize(),function(data){
+            if(data.status == '1'){
+                layer.msg(data.info,function () {
+                   location.href ='{% url "back:article/conservator_list/" %}';
+                    return false
+                });
+            }else {
+                layer.msg(data.info);
+                return false
+            }
+
+        },'json');
+    });
+
+
+
+</script>
+
+</html>

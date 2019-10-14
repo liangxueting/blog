@@ -1,0 +1,89 @@
+<script type="text/javascript" src="/static/back/js/jquery.js"></script>
+<script type="text/javascript" src="/static/layer/layer.js"></script>
+{% load my_tags %}
+<div>
+{#    一级菜单 开始#}
+    <div>
+{#        一级菜单 新建开始#}
+        <div>
+            <span>一级菜单</span>
+            <a href="{% url 'back:menu_add' %}">新建</a>
+        </div>
+{#        一级菜单 新建结束#}
+{#        一级菜单 列表遍历及操作开始#}
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>选项</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for row in menus %}
+                    <tr {% if row.id|safe == mid %} class="active" {% endif %}>
+                        <td><a href="?mid={{ row.id }}">{{ row.menu_name }}</a></td>
+                        <td><a href="{% url 'back:menu_edit' mid=row.id %}">编辑</a></td>
+                        <td><a href="javascript:;" class="delete" data-id="{{ row.id }}">删除</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+{#        一级菜单 列表遍历及操作结束#}
+    </div>
+{#    一级菜单 结束#}
+    <br><br><br>
+{#    二级菜单 开始#}
+    <div>
+{#        二级菜单操作 开始#}
+        <div>
+            <span>二级菜单</span>
+{#            当一级菜单的id值存在时，可以添加二级菜单#}
+            {% if mid %}
+            <a href="{% url 'back:menu_add_second' mid=mid %}">新建</a>
+            {% endif %}
+        </div>
+{#        二级菜单操作 结束#}
+{#        二级菜单表格 开始#}
+        <div>
+            <table>
+                <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>CODE&URL</th>
+                    <th>选项</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in menus_second %}
+                    <tr>
+                    {#  二级菜单名称#}
+                        <td>{{ row.menu_name }}</td>
+                        <td>{{ row.menu_path }}</td>
+                        <td><a href="{% url 'back:menu_edit_second' sid=row.id mid=mid %}">编辑</a></td>
+                        <td><a href="javascript:;" class="delete">删除</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+{#        二级菜单表格 结束#}
+    </div>
+{#    二级菜单 结束#}
+</div>
+<script>
+    $('.delete').click(function () {
+
+        $.post('{% url "back:menu_delete" %}',{'id':$(this).data('id'),csrfmiddlewaretoken:"{{ csrf_token }}"},function(data){
+            if(data.status==1){
+                layer.msg(data.info,function () {
+                   window.location.reload();
+                });
+            }else {
+                layer.msg(data.info)
+            }
+        },'json')
+    });
+</script>

@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>列表页</title>
+    <link href="/static/back/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/back/css/select.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/static/back/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/back/js/jquery.idTabs.min.js"></script>
+    <script type="text/javascript" src="/static/back/js/select-ui.min.js"></script>
+{#    layer弹框#}
+    <script type="text/javascript" src="/static/layer/layer.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function (e) {
+            $(".select1").uedSelect({
+                width: 345
+            });
+            $(".select2").uedSelect({
+                width: 167
+            });
+            $(".select3").uedSelect({
+                width: 100
+            });
+        });
+    </script>
+
+</head>
+
+<body>
+
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="#">首页</a></li>
+        <li><a href="#">用户列表</a></li>
+    </ul>
+</div>
+
+<div class="formbody">
+    <div id="usual1" class="usual">
+        <div id="tab2" class="tabson">
+            <form>
+                {% csrf_token %}
+            <ul class="seachform">
+
+                <li><label>用户名</label><input name="member_name" type="text" class="scinput"/></li>
+                <li><label>联系方式</label><input name="member_tel" type="text" class="scinput"/></li>
+
+                <li><label>&nbsp;</label><input name="" type="button" class="scbtn" value="查询" id="search"/></li>
+            </ul>
+            </form>
+
+            <table class="tablelist">
+                <thead>
+                <tr>
+                    <th><input name="" type="checkbox" value="" checked="checked"/></th>
+                    <th>编号<i class="sort"><img src="/static/back/images/px.gif"/></i></th>
+                    <th>用户名</th>
+                    <th>联系方式</th>
+                    <th>邮箱</th>
+                    <th>昵称</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody class="maina">
+
+                </tbody>
+            </table>
+
+
+
+
+        </div>
+
+    </div>
+
+{#    <script type="text/javascript">#}
+{#        $("#usual1 ul").idTabs();#}
+{#    </script>#}
+{##}
+{#    <script type="text/javascript">#}
+{#        $('.tablelist tbody tr:odd').addClass('odd');#}
+{#    </script>#}
+
+</div>
+
+
+</body>
+<script>
+    {#首次加载内容,通过ajax拿到数据 放到定义的maina标签中 开始#}
+    show_list();
+    function show_list() {
+        $.post('{% url "back:article/user_list_part/" %}',$('form').serialize(),function(data){
+            {#console.log(data);#}
+        $('.maina').html(data)
+        });
+    }
+    {#首次加载 结束#}
+    {#点击a链接失效并获取a链接中的路径传入ajax中提交，再次跳转#}
+    $(document).on('click','.paginItem a',function () {
+        $.post(this.href,$('form').serialize(),function (data) {
+           $('.maina').html(data)
+        });
+        return false;  //让a链接失效
+    });
+    {#点击a链接 结束#}
+    {#点击删除按钮开始#}
+    $(document).on('click','.del',function () {
+       _this = this;
+       layer.confirm('您确定删除吗？',{
+           btn:['确定',"取消"]
+       },function () {
+          id = $(_this).parent().data('id');
+          $.post('{% url "back:article/user_list_delete/" %}',{
+              "id":id,
+              "csrfmiddlewaretoken": "{{ csrf_token }}"
+          },function (data) {
+             if(data['status'] == 1){
+                 layer.msg(data.info,function () {
+                    $(_this).parent().parent().remove();
+                 });
+             }else {
+                 layer.msg(data.info);
+             }
+          },'json');
+       },
+           function () {
+       });
+       return false;
+    });
+    {#点击删除按钮结束#}
+    {#查询操作开始#}
+    $(document).on('click','#search',function () {
+        show_list();
+    });
+    {#查询结束#}
+
+
+
+</script>
+
+</html>

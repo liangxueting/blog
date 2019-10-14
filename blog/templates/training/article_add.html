@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文章列表</title>
+    <script src="/static/vue/dist/vue.min.js"></script>
+    <script src="/static/js/jquery-1.8.2.js"></script>
+    <script src="/static/layer/layer.js"></script>
+</head>
+<body>
+<div id="app">
+{#    [[ categoryList ]]#}
+    <ul>
+        <li>
+            <form action="">
+            <div>标题：<input type="text" name="article_title"></div>
+            <div>简述：<input type="text" name="article_description"></div>
+            <div>发布时间：<input type="text" name="article_addtime"></div>
+            <div>发布内容：<input type="text" name="article_content"></div>
+            <button type="button" v-on:click="article_add()">提交</button>
+            </form>
+        </li>
+    </ul>
+</div>
+</body>
+<script>
+    {#渲染页面#}
+    var app=new Vue({
+        el:'#app',
+        {#修改VUE中显示数据的语法，防止与Django冲突#}
+        delimiters:['[[',']]'],
+        data:{
+            {#定义一个空列表#}
+            categoryList:[],
+            article_delete_id:0,
+        },
+        methods:{
+             {#1 添加文章#}
+            article_add:function(){
+                console.log($('form').serialize());
+                $.ajax({
+                url:'{% url "blog:article_add" %}',
+                type:'get',
+                dataType:'json',
+                data:$('form').serialize(),
+                success:function(result){
+                     if (result.status ==1 ){
+                        layer.msg(result.info,function () {
+                           location.href='{% url "blog:article_lists" %}'
+                        });
+                    }else {
+                        layer.msg(result.info)
+                    }
+
+                }
+            });
+        }
+        }
+
+
+    });
+
+
+</script>
+</html>

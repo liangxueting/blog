@@ -1,0 +1,38 @@
+<script type="text/javascript" src="/static/back/js/jquery.js"></script>
+<script type="text/javascript" src="/static/layer/layer.js"></script>
+{# <link href="/static/back/css/style.css" rel="stylesheet" type="text/css"/>#}
+{#    <link href="/static/back/css/select.css" rel="stylesheet" type="text/css"/>#}
+{% load my_tags %}
+
+<h3>添加角色</h3>
+<form action="">
+    {% csrf_token %}
+    <input type="text" name="role_name" value="">
+<h3>添加权限</h3>
+    {% for k,v in permission_all.items %}
+        <div><label for="{{ v.id }}"> <input type="checkbox" value="{{ v.id }}" name="role_access[]" id="{{ v.id }}">{{ v.permission_name }}</label>
+
+        </div><br>
+        <div>
+            {% for v2 in v.children %}
+                <label for="{{ v2.id }}"><input type="checkbox" value="{{ v2.id }}" name="role_access[]" id="{{ v2.id }}">{{ v2.permission_name }}&nbsp;&nbsp;&nbsp;</label>
+            {% endfor %}
+        </div>
+        <br> <br><br>
+    {% endfor %}
+
+    <input type="button" name="dosubmit" id="dosubmit" value="添加"  style="display: inline-block;width: 85px; height: 35px; line-height: 35px; text-align:center;">
+</form>
+<script>
+    $('#dosubmit').click(function () {
+       $.post('{% url "back:role_add" %}',$('form').serialize(),function(data){
+            if(data.status==1){
+                layer.msg(data.info,function () {
+                   location.href = '{% url "back:role_list" %}'
+                });
+            }else {
+                layer.msg(data.info)
+            }
+       },'json') ;
+    });
+</script>

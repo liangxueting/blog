@@ -1,0 +1,243 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>博客天下</title>
+    <meta name="keywords" content="个人博客,个人博客模板"/>
+    <meta name="description" content="个人博客简介"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/css/base.css" rel="stylesheet">
+    <link href="/static/css/index.css" rel="stylesheet">
+    <link href="/static/css/m.css" rel="stylesheet">
+    <script src="/static/js/jquery.min.js"></script>
+{#    <script src="/static/js/page.js"></script>#}
+    <!--[if lt IE 9]>
+    <script src="js/modernizr.js"></script>
+    <![endif]-->
+    <script src="/static/layer/layer.js"></script>
+
+
+</head>
+<body>
+<header>
+
+    <div id="mnav">
+        <div class="logo"><a href="{% url 'blog:index' %}">博客天下</a></div>
+        <h2 id="mnavh"><span class="navicon"></span></h2>
+        <ul id="starlist">
+            <li class=""><a href="{% url 'blog:index' %}">网站首页</a></li>
+
+
+            <li class=""><a href="{% url "blog:about" %}">关于网站</a></li>
+
+
+            <li class=""><a href="{% url 'blog:diary' %}">博客列表</a></li>
+
+
+            <li class=""><a href="{% url "blog:publish" %}">文章发布</a></li>
+
+            <li class=""><a href="{% url "blog:gbook" %}">留言</a></li>
+            {% if member_id %}
+            <li class=""><a href="{% url "blog:personal"%}">{{ member_obj.member_nickname  }}</a></li>
+
+            <li class=""><a href="{% url 'blog:logout_auth' %}">退出</a></li>
+            {% else %}
+            <li class=""><a href="{% url 'blog:newtext' %}">登录</a></li>
+            <li class=""><a href="{% url 'blog:enroll' %}">注册</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    {#    <script>#}
+    {#        window.onload = function () {#}
+    {#            var oH2 = document.getElementById("mnavh");#}
+    {#            var oUl = document.getElementById("starlist");#}
+    {#            oH2.onclick = function () {#}
+    {#                var style = oUl.style;#}
+    {#                style.display = style.display == "block" ? "none" : "block";#}
+    {#                oH2.className = style.display == "block" ? "open" : ""#}
+    {#            }#}
+    {#            var obj = null;#}
+    {#            var As = document.getElementById('starlist').getElementsByTagName('a');#}
+    {#            obj = As[0];#}
+    {#            for (i = 1; i < As.length; i++) {#}
+    {#                if (window.location.href.indexOf(As[i].href) >= 0)#}
+    {#                    obj = As[i];#}
+    {#            }#}
+    {#            obj.id = 'selected'#}
+    {#        }#}
+    {#    </script>#}
+</header>
+<div class="line46"></div>
+<article>
+    {#    banner开始 top3#}
+    <div class="pics">
+        <ul>
+            {% for v in article_obj %}
+                <li><i><a href="{% url 'blog:text' v.article_id %}" target="_blank"><img src="{{ v.article_img }}"></a></i><span>{{ v.article_title }}</span>
+                </li>
+            {% endfor %}
+
+        </ul>
+    </div>
+    {# banner结束 top3#}
+    <div class="blank"></div>
+
+    <div class="leftbox">
+        <div class="tuijian">
+            <h2 class="hometitle"><span></span>特别推荐</h2>
+            <ul>
+                {% for v in article_obj01 %}
+                    <li>
+                        <div class="tpic"><img src="{{ v.article_img }}" title="{{ v.article_title }}">
+                        </div>
+                        <b>{{ v.article_title }}</b><span>{{ v.article_description }}</span><a
+                            href="{% url 'blog:text' v.article_id %}" target="_blank" class="readmore">阅读文章</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="newblogs">
+
+            <h2 class="hometitle">最新文章</h2>
+            <ul id="list">
+                {% for v in article_list %}
+                    <li>
+                        <h3 class="blogtitle"><a href="{% url 'blog:text' v.article_id %}"
+                                                 target="_blank">{{ v.article_title }}</a></h3>
+                        <div class="bloginfo"><span class="blogpic"><a href="{% url 'blog:text' v.article_id %}"
+                                                                       title="{{ v.article_title }}"><img
+                                src="{{ v.article_img }}" alt="{{ v.article_title }}"/></a></span>
+                            <p>{{ v.article_content }}</p>
+                        </div>
+
+                        <div class="autor"><span class="lm f_l"><a href="{% url 'blog:person_list' v.membered_id %}"
+                                                                   title="{{ v.membered.member_nickname }}"
+                                                                   target="_blank"
+                                                                   class="classname">{{ v.membered.member_nickname }}</a></span><span
+                                class="dtime f_l">{{ v.article_addtime| date:'Y-m-d' }}</span><span
+                                class="viewnum f_l">浏览（<a href="javascript:;">{{ v.article_clicknum }}</a>）</span><span
+                                class="pingl f_l">喜欢（ {{ v.article_praise_num }} ）</span><span class="f_r"><a
+                                href="{% url 'blog:text' v.article_id %}" class="more">阅读原文>></a></span></div>
+
+                    </li>
+                {% endfor %}
+            </ul>
+            {#    分页器#}
+            {#    <link rel="stylesheet" href="/static/bootstrap/dist/css/bootstra">#}
+            <ul>
+                <div class="pagelist">
+{#                    curPage  选中颜色#}
+{#                    上一页开始#}
+                {% if article_list.has_previous %}
+                <i class="paginItem" style="font-style: normal"><a
+    href="/blog/index/?page={{article_list.previous_page_number}}">
+                    <span class="pagepre"><<</span>
+                </a></i>
+                {% endif %}
+{#                    上一页结束#}
+{#            循环中间的分页 开始#}
+            {% for num in pagRange %}
+                    <i style="font-style: normal; display: inline-block; "><a class="allpage" href="/blog/index/?page={{ num }}" style="{% if num == currentPage %}background-color:rgba(2,146,0,0.34){% endif %}">{{ num }}</a></i>
+            {% endfor %}
+{#                循环中间的分页 结束#}
+{#                下一页开始#}
+                 {% if article_list.has_next %}
+                    <i style="font-style: normal ;" class="paginItem"><a
+    href="/blog/index/?page={{article_list.next_page_number}}">
+                        <span class="allpage">>></span>
+                </a></i>
+                {% endif %}
+{#                下一页结束#}
+                </div>
+            </ul>
+{#            <script src="/static/js/page2.js"></script>#}
+        </div>
+    </div>
+    <div class="rightbox">
+        <div class="aboutme">
+            <h2 class="ab_title">关于网站</h2>
+            <div class="avatar"><img src="/static/picture/b04.jpg"/></div>
+
+            <div class="ab_con">
+                <p>创建时间：{{ web_obj.0.web_content }}</p>
+                <p>主攻方向：{{ web_obj.1.web_content }}</p>
+                <p>创站地点：{{ web_obj.2.web_content }}</p>
+                <p>官方邮箱：{{ web_obj.3.web_content }}</p>
+            </div>
+        </div>
+        <div class="blank"></div>
+        <div class="search">
+            <form action="{% url "blog:like_list" %}" method="get" name="searchform" id="searchform">
+                {% csrf_token %}
+                <input name="keyboard" id="keyboard" class="input_text" value=""
+                       placeholder="请输入关键字" style="color: rgb(153, 153, 153);"/>
+                {#                <input type="hidden" name="member_id" value="{{ article_obj01.article_id }}">#}
+                <input name="Submit" class="input_submit" value="搜索" type="submit">
+            </form>
+        </div>
+        <div class="paihang">
+            <h2 class="ab_title"><a href="{% url "blog:click_list" %}">点击排行</a></h2>
+            <ul>
+
+                {% for v in article_obj03 %}
+                    <li><b><a href="{% url "blog:text" v.article_id %}" target="_blank">{{ v.article_title }}</a></b>
+                        <p><i><a href="{% url "blog:text" v.article_id %}" title="{{ v.article_title }}"><img
+                                src="{{ v.article_img }}"
+                                alt="{{ v.article_title }}"/></a></i>{{ v.article_description|truncatechars:55 }}
+                        </p>
+                    </li>
+                {% endfor %}
+
+            </ul>
+        </div>
+        <div class="paihang">
+            <h2 class="ab_title"><a href="{% url "blog:recommend_list" %}">站长推荐</a></h2>
+            <ul>
+
+                {% for v in article_obj04 %}
+                    <li><b><a href="{% url "blog:text" v.article_id %}" target="_blank">{{ v.article_title }}</a></b>
+                        <p><i><a href="{% url "blog:text" v.article_id %}" title="{{ v.article_title }}"><img
+                                src="{{ v.article_img }}"
+                                alt="{{ v.article_title }}"/></a></i>{{ v.article_description |truncatechars:50 }}
+                        </p>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="links">
+            <h2 class="ab_title">友情链接</h2>
+            <ul>
+                <li><a href="http://www.baidu.com" title="跳转百度">跳转百度</a></li>
+            </ul>
+        </div>
+        <div class="weixin">
+            <h2 class="ab_title">微信关注</h2>
+            <ul>
+                <img src="/static/picture/weixin.jpg">
+            </ul>
+        </div>
+    </div>
+</article>
+<footer>
+    <p>Design by <a href="javascript:;">博客</a> <a href="javascript:;">蜀ICP备11002373号-1</a></p>
+</footer>
+</body>
+<script>
+    $(document).ready(function () {
+        $('input[name="Submit"]').click(function () {
+            var val = $('input[name="keyboard"]').val();
+            if (val == '') {
+                layer.msg("请输入关键字");
+                return false;
+                {#location.href = "{% url 'blog:diary' %}";#}
+
+
+            }
+        });
+    });
+</script>
+
+
+
+</html>

@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>关于网站</title>
+    <meta name="keywords" content=""/>
+    <meta name="description" content="	"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/css/base.css" rel="stylesheet">
+    <link href="/static/css/index.css" rel="stylesheet">
+    <link href="/static/css/m.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="js/modernizr.js"></script>
+    <![endif]-->
+</head>
+<body>
+<header>
+    <div id="mnav">
+        <div class="logo"><a href="index.html">博客天下</a></div>
+        <h2 id="mnavh"><span class="navicon"></span></h2>
+        <ul id="starlist">
+            <li class=""><a href="{% url "blog:index" %}">网站首页</a></li>
+
+            <li class=""><a href="{% url "blog:about" %}">关于网站</a></li>
+
+
+            <li class=""><a href="{% url "blog:diary" %}">博客列表</a></li>
+
+
+            <li class=""><a href="{% url "blog:publish" %}">文章发布</a></li>
+
+            <li class=""><a href="{% url 'blog:gbook' %}">留言</a></li>
+            {% if username %}
+            <li class=""><a href="{% url "blog:personal"%}">{{ member_obj.member_nickname  }}</a></li>
+            <li class=""><a href="{% url 'blog:logout_auth' %}">退出</a></li>
+            {% endif %}
+
+        </ul>
+    </div>
+    <script>
+        window.onload = function () {
+            var oH2 = document.getElementById("mnavh");
+            var oUl = document.getElementById("starlist");
+            oH2.onclick = function () {
+                var style = oUl.style;
+                style.display = style.display == "block" ? "none" : "block";
+                oH2.className = style.display == "block" ? "open" : ""
+            }
+            var obj = null;
+            var As = document.getElementById('starlist').getElementsByTagName('a');
+            obj = As[0];
+            for (i = 1; i < As.length; i++) {
+                if (window.location.href.indexOf(As[i].href) >= 0)
+                    obj = As[i];
+            }
+            obj.id = 'selected'
+        }
+    </script>
+</header>
+<div class="line46"></div>
+<div class="blank"></div>
+<article>
+    <div class="leftbox">
+        <div class="infos">
+            <div class="newsview">
+                <h2 class="intitle">您现在的位置是：<a href="javascript:;">首页</a>&nbsp;>&nbsp;<a href="javascript:;">关于网站</a></h2>
+                <div class="news_infos">
+                    <p>丁腾，男，一个90后python码农！14年入行。一直潜心研究web前端技术，一边工作一边积累经验，分享一些个人博客模板，以及SEO优化等心得。我入行早，大家也亲切的叫我&ldquo;青姐&rdquo;。</p>
+
+                    <p>SEO奋斗的这几年时间，个人博客网站百度排名也从之前的30页后，排到了第一页。期间有很多的不容易，但是都没有放弃过。入了这一行 ，就深深的喜欢上它。我喜欢一句话&ldquo;冥冥中该来则来，无处可逃&rdquo;。</p>
+
+                    <p>
+                        近几年我也发现个人博客排前几页的也有很多是我做过的模板，感谢各位站长的欣赏，我仔细看过他们的网站。他们在我原模板的基础上有修改，而且他们做的原创内容都是值得一读的。有时候甚至排名都超过了我个人博客网站的排名。</p>
+
+                    <p>现在很多人向我请教如何做好SEO，我想说的是，一是&ldquo;代码&rdquo;，一定要简单，布局要合理。二是&ldquo;内容&rdquo;，一定要有原创，伪原创也是可以的。三是&ldquo;持续&rdquo;，这是一个持续性过程，一定要有耐心，SEO不是马上生效的。</p>
+
+                    <p>自从入了这一行，也交到了不少朋友，QQ群也不断的壮大起来，280998807(交流群&nbsp;已满员)&nbsp;
+                        280998843（技术群），群里的小伙伴们也很积极的帮助新朋友解决问题，如果你想加入我们，这个大家庭的门，永远给你敞开！另外微信群已于2019.7.13日开通（已满100，只接受群主邀请，可加我个人微信进群
+                        。我的个人微信号 15239970225）</p>
+
+                    <p><img alt="" width="200" src="/static/picture/weixin.jpg"/><br/>
+                        <br/>
+                        目前一些网络教学，培训机构，大学老师也会用青姐的模板，当做是案例来讲，我觉得非常荣幸，能通过他们的教学方式，让更多的人，获得学习方法，少走一些弯路。但是也存在这样一些人，公开售卖在淘宝、或者其他网站，如果你看到有类似的，那都是属于仿制，或者直接用的原模板，再次申明，本站模板，没有在淘宝或者其他网站售卖，请注意辨别！<br/>
+                        <br/>
+                        <strong>你也可以关注我的微信公众号，有最新的模板动态，我会第一时间在公众号推出。</strong></p>
+                    <br/>
+                    <strong>关于我的博客</strong><br/>
+                    <br/>
+                    域 名：www.yangqq.com 创建于2011年01月12日&nbsp;
+                    <p>服务器：阿里云服务器&nbsp;&nbsp;<a
+                            href="https://promotion.aliyun.com/ntms/act/ambassador/sharetouser.html?userCode=8smrzoqa&amp;productCode=vm"
+                            target="_blank"><strong>前往阿里云官网购买&gt;&gt;</strong></a></p>
+
+                    <p>备案号：蜀ICP备11002373号-1</p>
+
+                    <p>程 序：python 开发</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="rightbox">
+        <div class="aboutme">
+            <h2 class="ab_title">关于网站</h2>
+            <div class="ab_con">
+                <p>创建时间：{{ web_obj.0.web_content }}</p>
+                <p>主攻方向：{{ web_obj.1.web_content }}</p>
+                <p>创站地点：{{ web_obj.2.web_content }}</p>
+                <p>官方邮箱：{{ web_obj.3.web_content }}</p>
+            </div>
+        </div>
+        <div class="weixin">
+            <h2 class="ab_title">官方微信</h2>
+            <ul>
+                <img src="/static/picture/weixin.jpg">
+            </ul>
+        </div>
+    </div>
+</article>
+<footer>
+    <p>Design by <a href="javascript:;">博客天下</a> <a href="javascript:;">津ICP备11002373号-1</a></p>
+</footer>
+</body>
+</html>

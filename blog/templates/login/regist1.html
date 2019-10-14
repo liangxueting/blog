@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+<form action="" method="post">
+{#    安全csrf_token#}
+    {% csrf_token %}
+    <div>
+{# form表单  用户名#}
+        <label for="username">{{ form.username.label }}</label>
+{#        用户登录的input框#}
+        <p><input type="text" name="username" value="{{ request.POST.username }}"><span class="pull-right error">{{ form.username.errors.0 }}<!--span标签中写入报错信息--></span></p>
+    </div>
+    
+    <div>
+{# form表单   密码#}
+        <label for="pwd">{{ form.pwd.label }}</label>
+{#        用户密码input框#}
+        <p><input type="password" name="pwd" value="{{ request.POST.pwd }}"><span class="pull-right error">{{ form.pwd.errors.0 }}</span></p>
+    </div>
+    
+    <div>
+        <label for="r_pwd">{{ form.r_pwd.label }}</label>
+{#        用户密码input框#}
+        <p><input type="password" name="r_pwd" value="{{ request.POST.r_pwd }}"><span class="pull-right error">{{ form.r_pwd.errors.0 }}</span ><span class="pull-right error" >{{ clean_error.0 }}</span></p>
+    </div>
+    
+    <div>
+        <label for="email">{{ form.email.label }}</label>
+        <p><input type="text" name="email" value="{{ request.POST.email }}"><span class="pull-right error">{{ form.email.errors.0 }}</span></p>
+    </div>
+    
+    <div>
+        <label for="tel">{{ form.tel.label }}</label>
+        <p><input type="text" name="tel" value="{{ request.POST.tel }}"><span class="pull-right error">{{ form.tel.errors.0 }}</span></p>
+    </div>
+
+    <input type="submit">
+</form>
+</body>
+</html>

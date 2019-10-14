@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>留言</title>
+    <meta name="keywords" content="留言"/>
+    <meta name="description" content="	留言"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/css/base.css" rel="stylesheet">
+    <link href="/static/css/index.css" rel="stylesheet">
+    <link href="/static/css/m.css" rel="stylesheet">
+    <script src="/static/js/jquery-1.8.2.js"></script>
+    <script src="/static/layer/layer.js"></script>
+    <!--[if lt IE 9]>
+    <script src="js/modernizr.js"></script>
+    <![endif]-->
+</head>
+<body>
+<header>
+    <div id="mnav">
+        <div class="logo"><a href="index.html">博客天下</a></div>
+        <h2 id="mnavh"><span class="navicon"></span></h2>
+        <ul id="starlist">
+            <li><a href="{% url "blog:index" %}">网站首页</a></li>
+
+
+            <li class=""><a href="{% url "blog:about" %}">关于网站</a></li>
+
+
+            <li class=""><a href="{% url "blog:diary" %}">博客列表</a></li>
+
+
+            <li class=""><a href="{% url "blog:publish" %}">文章发布</a></li>
+
+
+            <li class=""><a href="{% url "blog:gbook" %}">留言</a></li>
+            {% if username %}
+            <li class=""><a href="{% url "blog:personal"%}">{{ member_obj.member_nickname  }}</a></li>
+            <li class=""><a href="{% url 'blog:logout_auth' %}">退出</a></li>
+            {% endif %}
+
+
+
+        </ul>
+    </div>
+    <script>
+        window.onload = function () {
+            var oH2 = document.getElementById("mnavh");
+            var oUl = document.getElementById("starlist");
+            oH2.onclick = function () {
+                var style = oUl.style;
+                style.display = style.display == "block" ? "none" : "block";
+                oH2.className = style.display == "block" ? "open" : ""
+            }
+            var obj = null;
+            var As = document.getElementById('starlist').getElementsByTagName('a');
+            obj = As[0];
+            for (i = 1; i < As.length; i++) {
+                if (window.location.href.indexOf(As[i].href) >= 0)
+                    obj = As[i];
+            }
+            obj.id = 'selected'
+        }
+    </script>
+</header>
+<div class="line46"></div>
+<div class="blank"></div>
+<article>
+    <div class="leftbox">
+        <div class="infos">
+            <div class="newsview">
+                <h2 class="intitle">您现在的位置是：首页&nbsp;>&nbsp;留言</h2>
+                <div class="gbook">
+{#                    留言开始#}
+                    {% for words in word_obj %}
+                    <div class="fb">
+                        <ul>
+                            <span class="tximg"><img src="{{ words.word_img }}"></span>
+                            <p class="fbtime"><span>{{ words.word_addtime|date:'Y-m-d' }}</span>{{ words.word_name }}</p>
+                            <p class="fbinfo">{{ words.word_content }}</p>
+                        </ul>
+                    </div>
+                    {% endfor %}
+{#                    留言结束#}
+{#                    留言添加功能 开始 dt#}
+                    <div class="gbox">
+                        <form action="" method="get" name="form1" id="form1">
+                            {% csrf_token %}
+                            <p><strong>来说点儿什么吧...</strong></p>
+                            <p><span> 您的姓名:</span>
+                                <input name="username" type="text" id="name"/>
+                                *</p>
+                            <p><span>选择头像:</span> *</p>
+                            <p><i>
+                                <img class="img" src="/static/picture/tx1.jpg" data-val="/static/picture/tx1.jpg"></i> <i>
+                                <img class="img" src="/static/picture/tx2.jpg" data-val="/static/picture/tx2.jpg"></i> <i>
+                                <img class="img" src="/static/picture/tx3.jpg" data-val="/static/picture/tx3.jpg"></i> <i>
+                                <img class="img" src="/static/picture/tx4.jpg" data-val="/static/picture/tx4.jpg"></i> <i>
+                                <img class="img" src="/static/picture/tx5.jpg" data-val="/static/picture/tx5.jpg"></i> <i>
+                                <img class="img" src="/static/picture/tx6.jpg" data-val="/static/picture/tx6.jpg"></i> <i>
+                                <img class="img" src="/static/picture/tx7.jpg" data-val="/static/picture/tx7.jpg"></i> <i>
+                                <img class="img" src="/static/picture/tx8.jpg" data-val="/static/picture/tx8.jpg"></i>
+                            </p>
+                            <input type="hidden" name="heading" value="/static/picture/tx1.jpg">
+                            <p><span class="tnr">留言内容:</span>
+                                <textarea name="content" cols="60" rows="12" id="lytext"></textarea>
+                            </p>
+                            <p>
+                                <input type="button" name="dosubmit" value="提交" style="display: inline-block; width: 60px;height: 25px"/>
+                            </p>
+                        </form>
+                    </div>
+{#                    留言添加功能 开始 dt#}
+                </div>
+                <script>
+                    function myFun(sId) {
+                        var oImg = document.getElementsByTagName('img');
+                        for (var i = 0; i < oImg.length; i++) {
+                            if (oImg[i].id == sId) {
+                                oImg[i].previousSibling.previousSibling.checked = true;
+                                oImg[i].style.opacity = '1';
+                            } else {
+                                oImg[i].style.opacity = '.8';
+                            }
+                        }
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+    <div class="rightbox">
+        <div class="weixin">
+            <h2 class="ab_title">官方微信</h2>
+            <ul>
+                <img src="/static/picture/weixin.jpg">
+            </ul>
+        </div>
+    </div>
+</article>
+<footer>
+    <p>Design by <a href="javascript:;">博客</a> <a href="javascript:;">蜀ICP备11002373号-1</a></p>
+</footer>
+</body>
+<script>
+    $('.img').click(function () {
+       var img = $(this).data('val');
+        $('input[name="heading"]').val(img);
+    });
+    $('input[name="dosubmit"]').click(function () {
+        var username = $('input[name="username"]').val();
+        var content = $("input[name='content']").val();
+        if(username == ""){
+            layer.msg('您还没有留下名字');
+            return false
+        }
+        if(content == ""){
+            layer.msg('尽情吐槽吧！！');
+            return false
+        }
+        $.get('{% url "blog:gbook" %}',$('form').serialize(),function(data){
+            if(data.status ==1 ){
+                layer.msg(data.info);
+                parent.location.reload();
+            }else {
+                layer.msg(data.info);
+            }
+        },'json');
+    });
+</script>
+</html>
+

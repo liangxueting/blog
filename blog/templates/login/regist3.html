@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+<form action="" method="post">
+    {% csrf_token %}
+    <div>
+        <label for="username">{{ form.username.label }}</label>
+        <p>{{ form.username }}<span class="pull-right error">{{ form.username.errors.0 }}</span></p>
+    </div>
+
+    <div>
+        <label for="pwd">{{ form.pwd.label }}</label>
+        <p>{{ form.pwd }}<span class="pull-right error">{{ form.pwd.errors.0 }}</span></p>
+    </div>
+
+    <div>
+        <label for="r_pwd">{{ form.r_pwd.label }}</label>
+        <p>{{ form.r_pwd }} <span class="pull-right error">{{ form.r_pwd.errors.0 }}</span><span class="pull-right error">{{ clean_error.0 }}</span></p>
+    </div>
+
+    <div>
+        <label for="email">{{ form.email.label }}</label>
+        <p>{{ form.email }} <span class="pull-right error">{{ form.email.errors.0 }}</span></p>
+    </div>
+
+    <div>
+        <label for="tel">{{ form.tel.label }}</label>
+        <p>{{ form.email }}<span class="pull-right error">{{ form.email.errors.0 }}</span></p>
+    </div>
+    <input type="submit">
+
+
+</form>
+</body>
+</html>

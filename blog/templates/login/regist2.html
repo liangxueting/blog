@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="" method="post">
+    {% csrf_token %}
+    {% for field in form %}
+        <div>
+            <label for="">{{ field.label }}</label>
+            {{ field }}
+            <span class="pull-right" style="color: red">
+
+                {% if field.label == 'r_pwd' %}
+                    <span>{{ clean_error.0 }}</span>
+                {% endif %}
+                {{ field.errors.0 }}
+            </span>
+        </div>
+    {% endfor %}
+    <input type="submit">
+</form>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<script type="text/javascript" src="/static/back/js/jquery.js"></script>
+<script type="text/javascript" src="/static/layer/layer.js"></script>
+{% load my_tags %}
+<h3>添加二级菜单</h3>
+<form action="">
+    {% csrf_token %}
+    菜单名称<input type="text" name="menu_name" value="">
+    路由名称<input type="text" name="menu_path" value="">
+    <input type="button" name="dosubmit" id="dosubmit" value="添加">
+</form>
+<script>
+    $('#dosubmit').click(function () {
+       $.post('{% url "back:menu_add_second" mid=mid %}',$('form').serialize(),function(data){
+            if(data.status==1){
+                layer.msg(data.info,function () {
+                   location.href = '{% url "back:menu_list" %}?mid={{ mid }}'
+                });
+            }else {
+                layer.msg(data.info)
+            }
+       },'json') ;
+    });
+</script>

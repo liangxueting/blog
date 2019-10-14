@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>站长推荐</title>
+    <meta name="keywords" content=""/>
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/css/base.css" rel="stylesheet">
+    <link href="/static/css/index.css" rel="stylesheet">
+    <link href="/static/css/m.css" rel="stylesheet">
+
+</head>
+<body>
+<header>
+    <div id="mnav">
+        <div class="logo"><a href="../login/index.html">博客天下</a></div>
+        <h2 id="mnavh"><span class="navicon"></span></h2>
+        <ul id="starlist">
+             <li><a href="{% url 'blog:index' %}">网站首页</a></li>
+
+
+            <li class=""><a href="{% url "blog:about" %}">关于网站</a></li>
+
+
+            <li class=""><a href="{% url 'blog:diary' %}">博客列表</a></li>
+
+
+            <li class=""><a href="{% url 'blog:publish' %}">文章发布</a></li>
+
+
+            <li class=""><a href="{% url 'blog:gbook' %}">留言</a></li>
+
+            {% if username %}
+            <li class=""><a href="{% url "blog:personal"%}">{{ member_obj.member_nickname  }}</a></li>
+            <li class=""><a href="{% url 'blog:logout_auth' %}">退出</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <script>
+        window.onload = function () {
+            var oH2 = document.getElementById("mnavh");
+            var oUl = document.getElementById("starlist");
+            oH2.onclick = function () {
+                var style = oUl.style;
+                style.display = style.display == "block" ? "none" : "block";
+                oH2.className = style.display == "block" ? "open" : ""
+            }
+            var obj = null;
+            var As = document.getElementById('starlist').getElementsByTagName('a');
+            obj = As[0];
+            for (i = 1; i < As.length; i++) {
+                if (window.location.href.indexOf(As[i].href) >= 0)
+                    obj = As[i];
+            }
+            obj.id = 'selected'
+        }
+    </script>
+</header>
+<div class="line46"></div>
+<article>
+    <div class="leftbox">
+        <div class="newblogs">
+            <h2 class="hometitle"><span>
+</span>站长推荐</h2>
+
+            <ul>
+                {% for v in article_obj %}
+                <li>
+                    <h3 class="blogtitle"><a href="{% url 'blog:text' v.article_id %}" target="_blank">{{ v.article_title }}</a></h3>
+                    <div class="bloginfo"><span class="blogpic"><a href="{% url "blog:text" v.article_id %}" title="{{ v.article_title }}"><img
+                            src="{{ v.article_img }}" alt="{{ v.article_title }}"/></a></span><p>{{ v.article_description }}</p>
+                    </div>
+                    <div class="autor">
+                        <span class="lm f_l"><a href="#" title="{{ v.member.member_nickname }}" target="_blank" class="classname">{{ v.member.member_nickname }}</a></span>
+                        <span class="dtime f_l">{{ v.article_addtime }}</span>
+                        <span class="viewnum f_l">浏览（<a href="javascript:;">{{ v.article_clicknum }}</a>）</span>
+                        <span class="pingl f_l">喜欢（{{ v.article_praise_num }}）</span>
+                        <span class="f_r"><a href="{% url 'blog:text' v.article_id %}" class="more">阅读原文>></a></span>
+                    </div>
+                </li>
+                {% endfor %}
+{#                <li>#}
+{#                    <h3 class="blogtitle"><a href="text2.html" target="_blank">作为一个设计师,如果遭到质疑你是否能恪守自己的原则?</a></h3>#}
+{#                    <div class="bloginfo"><span class="blogpic"><a href="text2.html"#}
+{#                                                                   title="作为一个设计师,如果遭到质疑你是否能恪守自己的原则?"><img#}
+{#                            src="/static/picture/75842f4d1e18d692a66c38eb172a40ab.jpg"#}
+{#                            alt="作为一个设计师,如果遭到质疑你是否能恪守自己的原则?"/></a></span>#}
+{#                        <p>曾经有站长找我求助，他说他不知道该怎么办，自己做出来的网站，不仅没有得到大家的认可，反而让大家给他开了一个评判大会。他自己认为已经是做的最好的，却遭受大家无情的...</p>#}
+{#                    </div>#}
+{#                    <div class="autor">#}
+{#                        <span class="lm f_l"><a href="diary_person.html" title="青子园" target="_blank"#}
+{#                                                class="classname">青子园</a></span>#}
+{#                        <span class="dtime f_l">2018-08-23</span>#}
+{#                        <span class="viewnum f_l">浏览（<a href="/">0</a>）</span>#}
+{#                        <span class="pingl f_l">喜欢（ 0 ）</span>#}
+{#                        <span class="f_r"><a href="text2.html" class="more">阅读原文>></a></span>#}
+{#                    </div>#}
+{#                </li>#}
+{##}
+{#                <li>#}
+{#                    <h3 class="blogtitle"><a href="text3.html" target="_blank">【匆匆那些年】总结个人博客经历的这四年</a></h3>#}
+{#                    <div class="bloginfo"><span class="blogpic"><a href="text3.html" title="【匆匆那些年】总结个人博客经历的这四年"><img#}
+{#                            src="/static/picture/3f0b6da48a6fd4e626a021ff7bd0d74f.jpg" alt="【匆匆那些年】总结个人博客经历的这四年"/></a></span>#}
+{#                        <p>博客从最初的域名购买，到上线已经有四年的时间了，这四年的时间，有笑过，有怨过，有悔过，有执着过，也有放弃过…但最后还是坚持了下来，时间如此匆匆，等再回过头已来不及去弥补...</p>#}
+{#                    </div>#}
+{#                    <div class="autor">#}
+{#                        <span class="lm f_l"><a href="diary_person.html" title="青子园" target="_blank"#}
+{#                                                class="classname">青子园</a></span>#}
+{#                        <span class="dtime f_l">2018-08-23</span>#}
+{#                        <span class="viewnum f_l">浏览（<a href="/">0</a>）</span>#}
+{#                        <span class="pingl f_l">喜欢（ 0 ）</span>#}
+{#                        <span class="f_r"><a href="text3.html" class="more">阅读原文>></a></span>#}
+{#                    </div>#}
+{#                </li>#}
+{##}
+{#                <li>#}
+{#                    <h3 class="blogtitle"><a href="text1.html" target="_blank">安静地做一个爱设计的女子</a></h3>#}
+{#                    <div class="bloginfo"><span class="blogpic"><a href="text1.html" title="安静地做一个爱设计的女子"><img#}
+{#                            src="/static/picture/917d732926d79cc2ae1012831ce51d1e.jpg" alt="安静地做一个爱设计的女子"/></a></span>#}
+{#                        <p>#}
+{#                            自从入了这行，很多人跟我说可以做网络教程，我也有考虑，但最终没有实现，因为我觉得在这个教程泛滥的时代，直接做一套免费的原创个人博客模板更为实在。每当看到自己喜欢的配色图片或者布局，惊艳的js或者css3效果的时候，就有了做模板的冲动。...</p>#}
+{#                    </div>#}
+{#                    <div class="autor">#}
+{#                        <span class="lm f_l"><a href="diary_person.html" title="青子园" target="_blank"#}
+{#                                                class="classname">青子园</a></span>#}
+{#                        <span class="dtime f_l">2018-08-23</span>#}
+{#                        <span class="viewnum f_l">浏览（<a href="/">4</a>）</span>#}
+{#                        <span class="pingl f_l">喜欢（ 0 ）</span>#}
+{#                        <span class="f_r"><a href="text1.html" class="more">阅读原文>></a></span>#}
+{#                    </div>#}
+{#                </li>#}
+{#                #}
+{#                <li>#}
+{#                    <h3><a href="../login/newtext.html">发表文章</a></h3>#}
+{#                </li>#}
+
+            </ul>
+            <div class="pagelist"></div>
+        </div>
+    </div>
+    <div class="rightbox">
+        <div class="blank"></div>
+        <div class="search">
+            <form action="" method="post" name="searchform" id="searchform">
+                <input name="keyboard" id="keyboard" class="input_text" value="请输入关键字"
+                       style="color: rgb(153, 153, 153);"
+                       onfocus="if(value=='请输入关键字'){this.style.color='#000';value=''}"
+                       onblur="if(value==''){this.style.color='#999';value='请输入关键字'}" type="text">
+                <input name="show" value="title" type="hidden">
+                <input name="tempid" value="1" type="hidden">
+                <input name="tbname" value="news" type="hidden">
+                <input name="Submit" class="input_submit" value="搜索" type="submit">
+            </form>
+        </div>
+        <div class="paihang">
+            <h2 class="ab_title"><a href="javascript:;">本栏推荐</a></h2>
+            <ul>
+
+
+                <li><b><a href="{% url "blog:text" article_obj01.article_id %}" target="_blank">{{ article_obj01.article_title }}</a></b>
+                    <p><i><a href="{% url "blog:text" article_obj01.article_id %}" title="{{ article_obj01.article_title }}"><img src="{{ article_obj01.article_img }}" alt="{{ article_obj01.article_title }}"/></a></i>{{ article_obj01.article_description|truncatechars:45 }}
+                    </p>
+                </li>
+            </ul>
+        </div>
+        <div class="paihang">
+            <h2 class="ab_title"><a href="javascript:;">点击排行</a></h2>
+            <ul>
+
+                {% for v in article_obj02 %}
+                <li><b><a href="{% url 'blog:text' v.article_id %}" target="_blank">{{ v.article_title }}</a></b>
+                    <p><i><a href="{% url 'blog:text' v.article_id %}" title="{{ v.article_title }}"><img
+                            src="{{ v.article_img }}" alt="{{ v.article_title }}"/></a></i>{{ v.article_description|truncatechars:50 }}
+                    </p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="weixin" id="follow-us">
+            <h2 class="ab_title">关注微信</h2>
+            <ul>
+                <img src="/static/picture/weixin.jpg">
+            </ul>
+        </div>
+    </div>
+</article>
+<footer>
+    <p>Design by <a href="javascript:;">博客天下</a> <a href="javascript:;">蜀ICP备11002373号-1</a></p>
+</footer>
+</body>
+</html>

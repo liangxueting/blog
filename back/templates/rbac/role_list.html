@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>角色列表页</title>
+    <link href="/static/back/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/back/css/select.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/static/back/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/back/js/jquery.idTabs.min.js"></script>
+    <script type="text/javascript" src="/static/back/js/select-ui.min.js"></script>
+{#    layer弹框#}
+    <script type="text/javascript" src="/static/layer/layer.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function (e) {
+            $(".select1").uedSelect({
+                width: 345
+            });
+            $(".select2").uedSelect({
+                width: 167
+            });
+            $(".select3").uedSelect({
+                width: 100
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="#">首页</a></li>
+        <li><a href="#">角色列表页</a></li>
+    </ul>
+</div>
+
+<div class="formbody">
+    <div id="usual1" class="usual">
+        <div id="tab2" class="tabson">
+            <form action="">
+            {% csrf_token %}
+            <table class="tablelist">
+                <thead>
+                <tr>
+                    <th><input name="" type="checkbox" value=""/></th>
+                    <th>编号<i class="sort"><img src="/static/back/images/px.gif"/></i></th>
+                    <th>角色名称</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for row in role %}
+    <tr>
+        <td><input type="checkbox"></td>
+        <td>{{ forloop.counter }}</td>
+        <td class="role_name">{{ row.role_name }}</td>
+        <td><a href="{% url 'back:permission' rid=row.id   %}" style="color:#1aaf67;">分配权限</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:;" class="delete" data-id="{{ row.id }}" style="color:#1aaf67;">删除角色</a></td>
+    </tr>
+    {% endfor %}
+                </tbody>
+            </table>
+           <ul style="margin-top: 10px; float:right;">
+                <li><label>&nbsp;</label><a href="{% url 'back:role_add' %}" class="scbtn" style="display: inline-block;width: 85px; height: 35px; line-height: 35px; text-align:center; text-decoration:none; color: #fff;">添加角色</a>
+                </li>
+           </ul>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+</body>
+<script>
+    $('.delete').click(function () {
+        role_name = $(this).parent().prev().prev().text();
+        {#console.log(res);#}
+       $.post("{% url 'back:role_delete' %}",{'id':$(this).data('id'),'role_name':role_name,"csrfmiddlewaretoken": "{{ csrf_token }}"},function(data){
+              if(data.status==1){
+                layer.msg(data.info,function () {
+                   window.location.reload();
+                });
+            }else {
+                layer.msg(data.info)
+            }
+        },'json');
+    });
+</script>
+</html>

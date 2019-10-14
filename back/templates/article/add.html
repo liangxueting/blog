@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>无标题文档</title>
+    <link href="/static/back/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/back/css/select.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/static/back/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/back/js/jquery.idTabs.min.js"></script>
+    <script type="text/javascript" src="/static/back/js/select-ui.min.js"></script>
+
+    <script src="/static/layer/layer.js"></script>
+    <script type="text/javascript" src="/static/plupload/moxie.js"></script>
+    <script type="text/javascript" src="/static/plupload/plupload.min.js"></script>
+
+    <script type="text/javascript" src="/static/back/kindeditor/kindeditor-all.js"></script>
+
+    {#导入plupload的js 用于编写多图片上传功能#}
+    <script type="text/javascript" src="/static/plupload/moxie.js"></script>
+    <script type="text/javascript" src="/static/plupload/plupload.min.js"></script>
+
+    {#引入时间插件#}
+    <script type="text/javascript" src="/static/laydate/laydate.js"></script>
+
+{# 引入三级联动插件#}
+    <script type="text/javascript" src="/static/cxSelect/jquery.cxselect.min.js"></script>
+{#    引入layer弹框#}
+    <script src="/static/layer/layer.js"></script>
+    <script>
+        KindEditor.ready(function (K) {
+            window.editor = K.create('#content', {
+                width: '800', {# 副文本编辑器的宽度 #}
+                height: '600', {# 副文本编辑器的高度 #}
+                resizeType: 0, {# 调整大小类型 #}
+                uploadJson: '/back/article/upload/', {# 文件上传的路径函数 #}
+                extraFileUploadParams: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}"
+                },
+                filePostName: "upload_img"//上传图片的名称
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function (e) {
+            $(".select1").uedSelect({
+                width: 345
+            });
+            $(".select2").uedSelect({
+                width: 167
+            });
+            $(".select3").uedSelect({
+                width: 100
+            });
+
+            {#//加载富文本编辑器#}
+            {#    KindEditor.ready(function(K) {#}
+            {#        K.create('#content', {#}
+            {#            allowFileManager : true,#}
+            {#            filterMode:true,#}
+            {#            afterBlur:function(){#}
+            {#                this.sync("#content");#}
+            {#            }#}
+            {#        });#}
+            {#    });#}
+        });
+
+    </script>
+</head>
+
+<body>
+<form action="" method="post">
+    {% csrf_token %}
+    <div class="place">
+        <span>位置：</span>
+        <ul class="placeul">
+            <li><a href="{% url "back:index/index/" %}">首页</a></li>
+            {% if article_update %}
+            <li><a href="javascript:;">文章修改</a></li>
+            {% else %}
+            <li><a href="javascript:;">文章发布</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <div class="formbody">
+        <div id="usual1" class="usual">
+            <div id="tab1" class="tabson">
+                <ul class="forminfo">
+                    <li><label>文章标题<b>*</b></label><input name="title" type="text" class="dfinput"  placeholder="请填写文章标题" value="{{ article_update.article_title }}"  style="width:342px;"/></li>
+
+                    <li><label>文章简介<b>*</b></label><textarea  name="article_description" id="" cols="54.5" rows="10" style="border:solid 1px #ccc " placeholder="请用30-180个字符简单介绍一下您的文章">{{ article_update.article_description }}</textarea>
+
+                     <li><label>作者<b>*</b></label>
+                        <div class="vocation">
+                            <select  class="select1" name="member_id" >
+                                 {% for member in member_obj %}
+                                <option  value="{{ member.member_id }}">{{ member.member_nickname }}</option>
+                                 {% endfor %}
+                                 {% if article_update %}
+                                    <option  value="{{ article_update.membered_id }}">{{ article_update.membered.member_nickname }}</option>
+                                 {% endif %}
+                            </select>
+                        </div>
+
+                    </li>
+                    <li><label>是否推荐<b>*</b></label>
+                        <div class="vocation">
+                            <select  class="select1" name="article_is_recommend" >
+                                <option  value="1" selected >推荐</option>
+                                <option  value="0">不推荐</option>
+                            </select>
+                        </div>
+
+                    </li>
+                    <li><label>添加时间<b>*</b></label><input name="time" type="text" class="dfinput" placeholder="请选择日期" style="width:150px;" id="test1" value="{{ article_update.article_addtime|date:'Y-m-d H:i:s' }}"/></li>
+{#                    引入时间标签#}
+
+                    <li><label>文章内容<b>*</b></label>
+                        <textarea id="content" name="content" style="width:700px;height:250px;">{{ article_update.article_content }}</textarea>
+                    </li>
+                    {#    定义一个空白的容器 用于存放上传的图片   上传后需要在ul中存放3个元素#}
+                    <li>
+                        <ul id="image_name_list"></ul>
+                    </li>
+
+                    {#    写一个html标签，用于点击上传文件#}
+                    <li>
+                        <label>文章封面<b>*</b></label>
+                        <a id="upload_image_name">
+                            <input type="button" value="图片上传" style="display: inline-block; height: 30px; width: 80px;border:solid 1px #ccc ">
+                            <input type="hidden" name="article_img" value="{{ article_update.article_img }}">
+                            <input type="hidden" name="article_num" value="{{ article_update_num }}">
+                        </a>
+                    </li>
+
+                    <li><label>&nbsp;</label><input name="dosubmit" type="submit" class="btn" value="马上发布"/></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+</body>
+{#引入js时间插件的代码块#}
+<script>
+    //执行一个laydate实例
+laydate.render({
+  elem: '#test1', //指定元素
+  type: 'datetime'
+});
+
+{#三级联动插件代码块#}
+ $('#test').cxSelect({
+        url : '/static/cxSelect/cityData.min.json',  //联动json数据
+        selects: ['province', 'city', 'area'],          //select框对应class
+        nodata: 'none'                                  //无子类别时不显示下拉框
+    });
+</script>
+
+{#定义一个js通过ajax提交图片资源到后台#}
+<script language="JavaScript">
+    var msgLayero_upload_image_name;
+    var index_upload_image_name;
+    var layer_upload_image_name = 1;
+    //实例化一个plupload上传对象
+    var uploader_upload_image_name = new plupload.Uploader({
+        browse_button: 'upload_image_name', //触发文件选择对话框的按钮，为那个元素id
+        url: '/back/article/upload2/', //服务器端的上传页面地址
+        flash_swf_url: '/static/plupload/Moxie.swf', //swf文件，当需要使用swf方式进行上传时需要配置该参数
+        silverlight_xap_url: '/static/plupload/Moxie.xap', //silverlight文件，当需要使用silverlight方式进行上传时需要配置该参数
+        multipart_params: {
+            type: 'image_name',
+            csrfmiddlewaretoken: "{{ csrf_token }}"
+        },
+        resize: {
+            width: 800//指定压缩后图片的宽度，如果没有设置该属性则默认为原始图片的宽度
+            //height: , //指定压缩后图片的高度，如果没有设置该属性则默认为原始图片的高度
+            //crop: false //是否裁剪图片
+        },
+        filters: {
+            max_file_size: '4mb'
+        },
+        init: {
+            //选择文件
+            FilesAdded: function (up, files) {
+                //加载层
+                index_upload_image_name = layer.msg('上传中...', {
+                    icon: 16, time: 0,
+                    shade: 0.01,
+                    success: function (layero, index) {
+                        msgLayero_upload_image_name = layero;//是加载层的div
+                    }
+                });
+                //layer_upload_image_name = layer.msg('上传中...', {time: 0}); //不自动关闭
+                uploader_upload_image_name.start();
+            },
+            UploadProgress: function (up, file) { //上传中，显示进度条
+                var percent = file.percent;
+                msgLayero_upload_image_name.find('.layui-layer-content').html('<i class="layui-layer-ico layui-layer-ico1"></i>上传中...' + percent + '%');
+
+            },//单个文件上传完成
+            FileUploaded: function (up, file, responseObject) {
+                console.log($.parseJSON(responseObject.response));//成功回调函数
+
+                {#                    $('#image_name_list').html('');#}
+                var result = $.parseJSON(responseObject.response);
+
+                if (result.status == 1) {
+                    //上传成功
+                    var htmls = '<li class="img_upload" style="position:relative;margin:0 10px -10px 0;">';
+                    htmls += '<input  type="hidden" name="image_name[]" value="' + result.file + '">'; //隐藏域，是为了把图片地址入库。。
+                    htmls += '   <img src="' + result.file + '" width="250"  >';
+                    htmls += '<span  style="position:absolute;top:-8px;right:-6px;background-color:#fff;border-radius:10px;"><a href=javascript:; class="delImg" data-val="' + result.file + '">&nbsp;<img src="/static/back/images/del.png" width="15" /></a></span>';
+                    htmls += '</li>';
+
+                    $('#image_name_list').append(htmls);
+                    //上传成功的弹出框
+                    msgLayero_upload_image_name.find('.layui-layer-content').html('<i class="layui-layer-ico layui-layer-ico1"></i>' + result.message);
+
+                    $("input[name='article_img']").val(result.file);
+                } else {
+                    //上传失败的弹出框
+                    msgLayero_upload_image_name.find('.layui-layer-content').html('<i class="layui-layer-ico layui-layer-ico2"></i>' + result.message);
+
+                }
+                setTimeout(function () {
+                    layer.close(index_upload_image_name);
+                }, 2000);
+
+            },
+            //全部文件上传完成
+            UploadComplete: function (up, files) {
+                setTimeout(function () {
+                    layer.close(index_upload_image_name);
+                }, 2000);
+            },
+            //返回错误
+            Error: function (up, err) {
+                msgLayero_upload_image_name.find('.layui-layer-content').html('<i class="layui-layer-ico layui-layer-ico2"></i>' + result.message);
+                setTimeout(function () {
+                    layer.close(index_upload_image_name);
+                }, 2000);
+            }
+        }
+    });
+
+    uploader_upload_image_name.init();
+
+    $(document).on('click', '.delImg', function () {
+        _this = this;
+        $.post('{% url "back:article/delImg/" %}', {
+            path: $(_this).data("val"),
+            csrfmiddlewaretoken: "{{ csrf_token }}"
+        }, function (json) {
+            if (json.status == 1) {
+                layer.msg("删除成功", {
+                    time: 2000 //2s后自动关闭
+                });
+                $(_this).parent().parent().remove();
+            } else {
+                layer.msg("删除失败", {
+                    time: 2000 //2s后自动关闭
+                });
+            }
+        }, 'json');
+    });
+
+</script>
+<script>
+    $('input[name="dosubmit"]').click(function () {
+        var  title = $('input[name="title"]').val();
+        var  description = $('input[name="description"]').val();
+        var  content = $('input[name="content"]').val();
+        var  x = $('#x').val();
+        if(title == ''){
+            layer.msg('标题不能为空');
+            return false
+        }else if (description == ''){
+            layer.msg('简介不能为空');
+            return false
+        }else if (content == ''){
+            layer.msg('内容不能为空');
+            return false
+        }
+     });
+</script>
+<script>
+    {#返回修改图片路径#}
+    article_num = $('input[name="article_num"]').val();
+    {#console.log(article_num);#}
+    if(article_num){
+         var article_img = $('input[name="article_img"]').val();
+        console.log(111111111111111111111);
+        console.log(article_img);
+         var htmls = '<li class="img_upload" style="position:relative;margin:0 10px -10px 0;">';
+                        htmls += '<input  type="hidden" name="image_name[]" value="' +article_img+ '">';                           //隐藏域，是为了把图片地址入库。。
+                        // 显示图片的标签
+                        {#判断是否发生该错误，图片不存在，是的话让他隐藏图片标签，不是则图片存在，显示标签#}
+                        htmls += '   <img src="' + article_img + '" width="250"  >';
+                            //删除按钮的标签
+                        htmls += '<span  style="position:absolute;top:-8px;right:-6px;background-color:#fff;border-radius:10px;"><a href=javascript:; class="delImg" data-val="' + article_img + '">&nbsp;<img src="/static/back/images/del.png" width="15" /></a></span>';
+                        htmls += '</li>';
+
+                        $('#image_name_list').append(htmls);
+    }
+
+</script>
+</html>

@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <meta charset="utf-8">
+{#    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">#}
+    <title>用户登录 - 博客园</title>
+    <link rel="shortcut icon" href="//common.cnblogs.com/favicon.ico" type="image/x-icon">
+    <link href="/static/css/_withoutnav.min.css" rel="stylesheet">
+    <link href="/static/css/signin.min.css" rel="stylesheet">
+    <style type="text/css"></style>
+    <script src="/static/js/jquery-1.8.2.js"></script>
+    <script src="/static/layer/layer.js"></script>
+
+</head>
+<body>
+<svg aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;">
+    <symbol id="icon-login-sign" viewBox="0 0 1024 1024">
+        <path d="M512.844536 512m-501.443299 0a501.443299 501.443299 0 1 0 1002.886598 0 501.443299 501.443299 0 1 0-1002.886598 0Z"
+              fill="#F3BA4C"></path>
+        <path d="M541.347629 462.383505a137.237113 137.237113 0 1 0-43.599175 0c-272.574021 48.877526-281.547216 291.048247-281.652784 293.581856h11.717938c0-2.428041 592.336495-0.950103 592.336495-0.950103-29.769897-213.878763-217.573608-277.430103-278.802474-292.631753z"
+              fill="#FFFFFF"></path>
+        <path d="M512 1024A512 512 0 1 1 1024 512 512.527835 512.527835 0 0 1 512 1024z m0-1002.886598A490.886598 490.886598 0 1 0 1002.886598 512 491.414433 491.414433 0 0 0 512 21.113402z"
+              fill="#DBA02E"></path>
+    </symbol>
+</svg>
+<div class="center-container">
+    <div class="center-body h-sm-100 card">
+        <div class="card-body">
+            <div class="login-top text-center"><span class="login-title">博客园用户登录</span> <a
+                    href="https://www.cnblogs.com/">
+                <svg class="login-sign">
+                    <use xlink:href="#icon-login-sign"></use>
+                </svg>
+            </a>
+                <div class="login-info">代码改变世界</div>
+            </div>
+            <form id="loginForm" method="post" onsubmit="return false"
+                  action="" novalidate="novalidate">
+            {% csrf_token %}
+                <div class="form-group"><input tabindex="1" class="form-control" placeholder="登录用户名" autofocus="" type="text" data-val="true" data-val-required="请输入登录用户名" id="LoginName" name="username"> <span class="invalid-feedback field-validation-valid" data-valmsg-for="LoginName" data-valmsg-replace="true"></span> <a href="//passport.cnblogs.com/GetUsername.aspx" class="txt-forget-sign">忘记登录用户名</a></div>
+
+                <div class="form-group"><input tabindex="2" class="form-control" placeholder="密码" type="password" data-val="true" data-val-required="请输入密码" id="Password" name="pwd"><span class="invalid-feedback field-validation-valid" data-valmsg-for="Password"
+                          data-valmsg-replace="true"></span> <a href="{% url 'blog:get_pwd' %}" class="txt-forget-sign">忘记密码</a></div><div class="form-check form-remember"><input tabindex="3" type="checkbox" data-val="true"
+                                                             data-val-required="The 记住我 field is required."
+                                                             id="IsRemember" name="IsRemember" value="true"> <label
+                        class="label-remember" for="IsRemember">记住我</label></div>
+                <button tabindex="4" id="submitBtn" type="submit"
+                        class="btn-login btn btn-primary btn-sm ladda-button px-4" data-style="slide-down"><span
+                        class="ladda-label">登录</span> <span class="ladda-spinner"></span>
+                    <div class="ladda-progress" style="width: 0px;"></div>
+                </button>
+{#                <input type="hidden" id="PublicKey" name="PublicKey"#}
+{#                       value="">#}
+{#                <input class="none" type="checkbox" checked="" data-val="true"#}
+{#                       data-val-required="The EnableCaptcha field is required." id="EnableCaptcha" name="EnableCaptcha"#}
+{#                       value="true">#}
+                <div class="login-footer">
+                    <div class="ajax-error-box">
+                        <div class="ajax-error validation-summary-valid" data-valmsg-summary="true">
+                            <ul>
+                                <li style="display:none"></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <span>没有帐户，<a href="{% url 'blog:enroll' %}">立即注册</a></span></div>
+{#                <input name="__RequestVerificationToken" type="hidden"#}
+{#                       value="CfDJ8D8Q4oM3DPZMgpKI1MnYlrmD9jmSV3reFqVriqgECb73AoAPklaqjIgTfNNZEBGhoHw3W1D0A-iqTLlH7205uZHBHwmRiHmdp_tjbAa6ydkNMB-YhhA_ZdqAdqtMetpXkiGJALzjhAGcFFK_mdTKk5w"><input#}
+{#                    name="IsRemember" type="hidden" value="false"><input name="EnableCaptcha" type="hidden"#}
+{#                                                                         value="false">#}
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    $(document).ready(function () {
+       $("#submitBtn").click(function () {
+          var username = $("input[name='userbane']").val();
+          var pwd = $("input[name='pwd']").val();
+          var regular = /^\w{6,16}$/;
+          if(username == '' || pwd == ''){
+              layer.msg('用户或密码不能为空');
+              return false
+          }
+          if(!regular.test(username) || !regular.test(pwd)){
+              layer.msg('用户或密码格式不正确');
+              return false
+          }
+
+          $.post("{% url 'blog:newtext' %}",$('form').serialize(),function (data) {
+
+              if(data.status==0){
+                  layer.msg(data.info);
+
+              }else {
+                  {#用layer的函数可以减缓登录的快速切换#}
+                  layer.msg(data.info,function () {
+                      location.href="{% url 'blog:index' %}";
+                  });
+
+              }
+          },'json');
+
+       });
+    });
+</script>
+</html>
+{#<script src="/static/js/signin.min.js"></script>#}

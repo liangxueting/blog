@@ -1,0 +1,37 @@
+<script type="text/javascript" src="/static/js/jquery-1.8.2.js"></script>
+<script type="text/javascript" src="/static/layer/layer.js"></script>
+{#载入#}
+{#{% load my_tags %}#}
+{#表格#}
+<form action="">
+{% csrf_token %}
+<table>
+    <tr><a href="{% url 'back:role_add' %}">添加角色</a></tr>
+    <tr>
+        <td>角色名称</td>
+        <td>操作</td>
+    </tr>
+    {% for row in role %}
+    <tr>
+        <td class="role_name">{{ row.role_name }}</td>
+        <td><a href="{% url 'back:permission' rid=row.id   %}">分配权限</a>&nbsp;</td>
+        <td><a href="javascript:;" class="delete" data-id="{{ row.id }}">删除角色</a></td>
+    </tr>
+    {% endfor %}
+</table>
+</form>
+<script>
+    $('.delete').click(function () {
+        role_name = $(this).parent().prev().prev().text();
+        {#console.log(res);#}
+       $.post("{% url 'back:role_delete' %}",{'id':$(this).data('id'),'role_name':role_name,"csrfmiddlewaretoken": "{{ csrf_token }}"},function(data){
+              if(data.status==1){
+                layer.msg(data.info,function () {
+                   window.location.reload();
+                });
+            }else {
+                layer.msg(data.info)
+            }
+        },'json');
+    });
+</script>

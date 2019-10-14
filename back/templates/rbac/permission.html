@@ -1,0 +1,37 @@
+<script type="text/javascript" src="/static/back/js/jquery.js"></script>
+<script type="text/javascript" src="/static/layer/layer.js"></script>
+{% load my_tags %}
+
+<form action="">
+    {% csrf_token %}
+    {% for k,v in permission_all.items %}
+        <div>
+            <label for="{{ v.id }}" style="display: inline-block; width: 120px;height: 30px;border: 1px solid #1574e2;line-height: 30px;border-radius: 5px;text-align: center;background-color: #3eafe0;color:#ffffff;">
+            <input type="checkbox" value="{{ v.id }}" name="permission[]" {% if v.id|safe in permission_current %} checked="checked" {% endif %} id="{{ v.id }}">{{ v.permission_name }}</label>
+        </div>
+        <div>
+            {% for v2 in v.children %}
+                <label for="{{ v2.id }}">
+                <input type="checkbox" value="{{ v2.id }}" name="permission[]" {% if v2.id|safe in permission_current %} checked="checked" {% endif %} id="{{ v2.id }}">{{ v2.permission_name }}&nbsp;&nbsp;&nbsp;</label>
+            {% endfor %}
+        </div>
+        <br> <br><br>
+    {% endfor %}
+
+    <input type="hidden" value="{{ rid }}" name="rid">
+    <input type="button" value="提交" name="dosubmit" id="dosubmit">
+</form>
+
+<script>
+    $('#dosubmit').click(function () {
+       $.post('{% url 'back:do_permission' %}',$('form').serialize(),function(data){
+            if(data.status==1){
+                layer.msg(data.info,function () {
+                    location.href ="{% url 'back:role_list'  %}"
+                });
+            }else {
+                layer.msg(data.info)
+            }
+       },'json');
+    });
+</script>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script src="/static/layer/layer.js"></script>
+    <style>
+        ul {
+            display: block;
+            list-style: none;
+            cursor: pointer;
+        }
+
+        .lv2U,.lv3U1,.lv3U2,.lv3U3 {
+            display: none;
+        }
+
+        #tree img {
+            display: block;
+            float: left;
+            width: 20px;
+            height: 20px;
+        }
+
+        .lv3Checks{
+            display: block; float: left; clear: left; width: 15px; height: 15px;
+        }
+    </style>
+</head>
+
+<body>
+<form action="">
+    {% csrf_token %}
+    {% for k,v in permission_all.items %}
+    <div class="tree">
+        <ul class="lv1U">
+            <img src="/media/add_article_img/2.png" class="lv1M" style="float: left;"/>
+            <input type="checkbox" class="allCheck" style="display: block; float: left; width: 15px; height: 15px;" value="{{ v.id }}" name="permission[]" {% if v.id|safe in permission_current %}checked="checked" {% endif %} id="{{ v.id }}" />
+        <li class="lv1L1" id="{{ v.id }}" ><span style="display: inline-block;width: 120px;height: 30px;border: 1px solid #1574e2;line-height: 30px;border-radius: 5px;text-align: center;background-color: #3eafe0;color:#ffffff;">{{ v.permission_name }}</span>
+
+        {% for v2 in v.children %}
+                <ul class="lv2U" style="clear: left; margin-left: 25px;">
+                    <br>
+                    <input type="checkbox" class="secondCheck1" style="display: inline-block; float: left; width: 15px; height: 15px;" value="{{ v2.id }}" name="permission[]" {% if v2.id|safe in permission_current %} checked="checked" {% endif %} id="{{ v2.id }}"/>
+                    <li class="lv2L1" style="display: inline-block; padding: 0px 20px; height: 30px;border: 1px solid #1574e2;line-height: 30px;border-radius: 5px;text-align: center;background-color: #3eafe0;color:#ffffff;">{{ v2.permission_name }}</li>
+                </ul>
+             {% endfor %}
+            </li>
+        </ul>
+    </div>
+    {% endfor %}
+    <br><br>
+    <input type="hidden" value="{{ rid }}" name="rid">
+    <input type="button" value="提交" name="dosubmit" id="dosubmit" style="display: inline-block; padding: 0px 20px; height: 30px;border: 1px solid #1574e2;line-height: 30px;border-radius: 5px;text-align: center;background-color: #3eafe0;color:#ffffff;margin-left: 200px;">
+</form>
+
+</body>
+<script>
+        $(function() {
+            $(".lv1M").click(function() {
+                _this = this;
+                {#console.log($(_this).next().next().children('.lv2U'));#}
+                if ($(_this).next().next().children('.lv2U').is(":visible")) {
+                    //                      alert("隐藏内容");
+                    $(_this).attr("src", "/media/add_article_img/2.png");
+                } else {
+                    //                      alert("显示内容");
+                    $(_this).attr("src", "/media/add_article_img/1.png");
+                }
+                $(_this).next().next().children('.lv2U').slideToggle(300);
+            });
+
+            $("span").click(function() {
+               _this = this;
+               {#console.log($(_this).parent().children('.lv2U'));#}
+               {#console.log( $(_this).parent().prev().prev());#}
+               {#console.log($(_this).next().next().children('.lv2U'));#}
+                if($(_this).next('.lv2U').is(":visible")) {
+                    //                      alert("隐藏内容");
+                   $(_this).parent().prev().prev().attr("src", "/media/add_article_img/2.png");
+                } else {
+                    //                      alert("显示内容");
+                   $(_this).parent().prev().prev().attr("src", "/media/add_article_img/1.png");
+                }
+                $(_this).parent().children('.lv2U').slideToggle(300);
+
+            });
+            $('.allCheck').click(function(){
+                  var _this = this;
+                  {#console.log($(_this).next().children().children('.secondCheck1'));#}
+                $(_this).next().children().children('.secondCheck1').prop('checked',$(_this).prop('checked'));
+    });
+
+            $(".secondCheck1").click(function(){
+                var _this = this;
+        //判断有没有没有被勾选上的复选框
+                console.log($(_this).parent().parent().prev('.allCheck'));
+       $(_this).parent().parent().prev('.allCheck').prop('checked',!$(_this).parent().children('.secondCheck1:not(:checked)').length);
+     } );
+    });
+</script>
+
+<script>
+    $('#dosubmit').click(function () {
+             {#定义二级权限的变量#}
+        var per = $('.secondCheck1');
+        {#遍历二级权限#}
+        {#console.log(per.prop());#}
+         $.each(per,function (key,val) {
+            {#console.log($(this).prop('checked'));#}
+            {#判断当第二权限有被选中的时候，查看第一权限是否选中#}
+            if($(this).prop('checked')){
+                {#console.log($(this).parents('ul').children('.allCheck').prop('checked'));#}
+                {#console.log(12345678)#}
+                {#判断对应的二级权限的一级权限是否被选中，没有被选中阻止标点提交#}
+                if ($(this).parents('ul').children('.allCheck').prop('checked') !== true){
+                    {#$(this).parents('ul').children('.allCheck').prop('checked','checked');#}
+                    {#console.log(val);#}
+                    layer.msg('请勾选相应的一级(菜单)权限');
+                    return false
+                }else {
+                   $.post('{% url 'back:do_permission' %}',$('form').serialize(),function(data){
+            if(data.status==1){
+                layer.msg(data.info,function () {
+                    location.href ="{% url 'back:role_list'  %}"
+                });
+             }else {
+                layer.msg(data.info)
+             }
+       },'json');
+                }
+            }
+
+         });
+   });
+
+</script>
+</html>

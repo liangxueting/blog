@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>菜单列表页</title>
+    <link href="/static/back/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/back/css/select.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/static/back/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/back/js/jquery.idTabs.min.js"></script>
+    <script type="text/javascript" src="/static/back/js/select-ui.min.js"></script>
+{#    layer弹框#}
+    <script type="text/javascript" src="/static/layer/layer.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function (e) {
+            $(".select1").uedSelect({
+                width: 345
+            });
+            $(".select2").uedSelect({
+                width: 167
+            });
+            $(".select3").uedSelect({
+                width: 100
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="#">首页</a></li>
+        <li><a href="#">菜单列表页</a></li>
+    </ul>
+</div>
+
+<div class="formbody">
+    <div id="usual1" class="usual">
+     <div>
+            <span style="font-size: 18px;">一级菜单&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'back:menu_add' %}" style="display: inline-block;width: 85px; height: 35px; line-height: 35px; text-align:center; text-decoration:none; color: #ffffff;" class="scbtn">新建</a></span>
+                </div>
+        <div id="tab2" class="tabson">
+            <form action="">
+            {% csrf_token %}
+            <table class="tablelist">
+                <thead>
+                <tr>
+                    <th><input name="" type="checkbox" value=""/></th>
+                    <th>编号<i class="sort"><img src="/static/back/images/px.gif"/></i></th>
+                    <th>菜单名称</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in menus %}
+                    <tr {% if row.id|safe == mid %} class="active" {% endif %}>
+                        <td><input type="checkbox"></td>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="?mid={{ row.id }}">{{ row.menu_name }}</a></td>
+                        <td><a href="{% url 'back:menu_edit' mid=row.id %}" style="color:#1aaf67;">编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:;" class="delete" data-id="{{ row.id }}" style="color:#1aaf67;">删除</a></td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+             <div style="margin: 15px 0px;">
+            <span style="font-size: 18px;">二级菜单&nbsp;&nbsp;&nbsp;{% if mid %}
+            <a href="{% url 'back:menu_add_second' mid=mid %}" style="display: inline-block;width: 85px; height: 35px; line-height: 35px; text-align:center; text-decoration:none; color: #ffffff;" class="scbtn">新建</a>
+            {% endif %}</span>
+{#            当一级菜单的id值存在时，可以添加二级菜单#}</div>
+            <table class="tablelist">
+                <thead>
+                <tr>
+                    <th><input name="" type="checkbox" value=""/></th>
+                    <th>编号<i class="sort"><img src="/static/back/images/px.gif"/></i></th>
+                    <th>菜单名称</th>
+                    <th>CODE&URL</th>
+                    <th>选项</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in menus_second %}
+                    <tr>
+                    {#  二级菜单名称#}
+                        <td><input type="checkbox"></td>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ row.menu_name }}</td>
+                        <td>{{ row.menu_path }}</td>
+                        <td><a href="{% url 'back:menu_edit_second' sid=row.id mid=mid %}" style="color:#1aaf67;">编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:;" class="delete" style="color:#1aaf67;">删除</a></td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+{#           <ul style="margin-top: 10px; float:right;">#}
+{#                <li><label>&nbsp;</label><a href="{% url 'back:role_add' %}" class="scbtn" style="display: inline-block;width: 85px; height: 35px; line-height: 35px; text-align:center; text-decoration:none; color: #fff;">添加角色</a>#}
+{#                </li>#}
+{#           </ul>#}
+            </form>
+        </div>
+    </div>
+</div>
+
+
+</body>
+<script>
+    $('.delete').click(function () {
+        role_name = $(this).parent().prev().prev().text();
+        {#console.log(res);#}
+       $.post("{% url 'back:role_delete' %}",{'id':$(this).data('id'),'role_name':role_name,"csrfmiddlewaretoken": "{{ csrf_token }}"},function(data){
+              if(data.status==1){
+                layer.msg(data.info,function () {
+                   window.location.reload();
+                });
+            }else {
+                layer.msg(data.info)
+            }
+        },'json');
+    });
+</script>
+</html>

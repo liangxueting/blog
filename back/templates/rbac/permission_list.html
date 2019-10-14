@@ -1,0 +1,94 @@
+<script type="text/javascript" src="/static/back/js/jquery.js"></script>
+<script type="text/javascript" src="/static/layer/layer.js"></script>
+{% load my_tags %}
+<div>
+{#    一级菜单(权限) 开始#}
+    <div>
+{#        一级菜单(权限) 新建开始#}
+        <div>
+            <span>一级(菜单)权限</span>
+            {% if request|is_have_permission:'/back/permission/add/' %}
+            <a href="{% url 'back:permission_add' %}">新建</a>
+            {% endif %}
+        </div>
+{#        一级菜单(权限) 新建结束#}
+{#        一级菜单(权限) 列表遍历及操作开始#}
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>是否是菜单</th>
+                        <th>选项</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for row in permissions_QuerySet %}
+                    <tr {% if row.id|safe == mid %} class="active" {% endif %}>
+                        <td><a href="?mid={{ row.id }}">{{ row.permission_name }}</a></td>
+                        <td>{% if row.menu_id %}是{% else %}否{% endif %}</td>
+                        <td><a href="{% url 'back:permission_edit' mid=row.id %}">编辑</a></td>
+                        <td><a href="javascript:;" class="delete" data-id="{{ row.id }}">删除</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+{#        一级菜单(权限) 列表遍历及操作结束#}
+    </div>
+{#    一级菜单(权限) 结束#}
+    <br><br><br>
+{#    二级(菜单)权限 开始#}
+    <div>
+{#        二级(菜单)权限操作 开始#}
+        <div>
+            <span>二级(菜单)权限</span>
+{#            当一级菜单的id值存在时，可以添加二级菜单#}
+            {% if mid %}
+            <a href="{% url 'back:permission_add_second' mid=mid %}">新建</a>
+            {% endif %}
+        </div>
+{#        二级(菜单)权限操作 结束#}
+{#        二级(菜单)权限表格 开始#}
+        <div>
+            <table>
+                <thead>
+                <tr>
+                    <th>名称&nbsp;&nbsp;</th>
+                    <th>规则(URL)&nbsp;&nbsp;</th>
+                    <th>是否是菜单&nbsp;&nbsp;</th>
+                    <th>选项&nbsp;&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in permissions_second_QuerySet %}
+                    <tr>
+                    {#  二级(菜单)权限名称#}
+                        <td>{{ row.permission_name }}&nbsp;&nbsp;</td>
+                        <td>{{ row.permission_rule }}&nbsp;&nbsp;</td>
+                        <td>{% if row.menu_id %}是&nbsp;&nbsp;{% else %}否&nbsp;&nbsp;{% endif %}</td>
+                        <td><a href="{% url 'back:permission_edit_second' sid=row.id mid=mid %}">编辑</a></td>
+                        <td><a href="javascript:;" class="delete" data-id="{{ row.id }}">删除</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+{#        二级(菜单)权限表格 结束#}
+    </div>
+{#    二级(菜单)权限 结束#}
+</div>
+<script>
+    $('.delete').click(function () {
+        $.post('{% url "back:permission_delete" %}',{'id':$(this).data('id'),csrfmiddlewaretoken:"{{ csrf_token }}"},function(data){
+            if(data.status==1){
+                layer.msg(data.info,function () {
+                   window.location.reload();
+                });
+            }else {
+                layer.msg(data.info)
+            }
+        },'json')
+    });
+</script>

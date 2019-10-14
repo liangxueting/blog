@@ -1,0 +1,68 @@
+{#循环遍历主要内容 开始#}
+{% for v in comment_list %}
+<tr>
+    <td><input name="" type="checkbox" value=""/></td>
+    <td>{{ forloop.counter }}</td>   {# 编号 #}
+    <td>{{ v.member.member_nickname }}</td>
+    <td>{{ v.article.article_title}}</td>
+     <td>{{ v.comment_content }}</td>
+    <td>{{ v.comment_addtime|date:'Y-m-d H:i:s' }}</td>
+    <td data-id="{{ v.comment_id }}"><a href="{% url "back:article/comment_list_check/" v.comment_id %}" class="tablelink">查看</a> <a href="javascript:;" class="tablelink del"> 删除</a>
+</tr>
+{% endfor %}
+{#循环遍历主要内容 结束#}
+{#分页器 开始#}
+
+<tr><td colspan="7">  <div class="pagin">
+<div class="message">共<i class="blue">&nbsp;{{ Sum.comment_id__count }}&nbsp;</i>条记录，当前显示第&nbsp;
+    {% for num0 in pageRange %}
+    <i class="blue">{% if num0 == currentPage %}{{ num0 }}{% endif %}</i>
+    {% endfor %}
+    页</div>
+{% if Sum.comment_id__count <= 2 %}
+<ul class="paginList" style="display:none;">
+
+     {% if comment_list.has_previous %}
+                    <li class="paginItem"><a
+                            href="/back/article/comment_list_part/?page={{ comment_list.previous_page_number }}">
+                        <span class="pagepre"></span></a></li>
+                {% endif %}
+
+
+    {% for num in pageRange %}
+                    <li  class="paginItem {% if num == currentPage %}current{% endif %}" ><a
+                            href="/back/article/comment_list_part/?page={{ num }}">{{ num }}</a></li>
+                {% endfor %}
+
+
+    {% if comment_list.has_next %}
+                    <li class="paginItem"><a
+                            href="/back/article/comment_list_part/?page={{ comment_list.next_page_number }}"><span
+                            class="pagenxt"></span></a></li>
+                {% endif %}
+</ul>
+{% else %}
+<ul  class="paginList">
+
+     {% if comment_list.has_previous %}
+                    <li class="paginItem"><a
+                            href="/back/article/comment_list_part/?page={{ comment_list.previous_page_number }}">
+                        <span class="pagepre"></span></a></li>
+                {% endif %}
+
+
+    {% for num in pageRange %}
+                    <li class="paginItem {% if num == currentPage %}current{% endif %}"><a
+                            href="/back/article/comment_list_part/?page={{ num }}">{{ num }}</a></li>
+                {% endfor %}
+
+
+    {% if comment_list.has_next %}
+                    <li class="paginItem"><a
+                            href="/back/article/comment_list_part/?page={{ comment_list.next_page_number }}"><span
+                            class="pagenxt"></span></a></li>
+                {% endif %}
+</ul>
+{% endif %}
+{#分页器 结束#}
+</div></td></tr>

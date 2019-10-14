@@ -1,0 +1,30 @@
+<script type="text/javascript" src="/static/back/js/jquery.js"></script>
+<script type="text/javascript" src="/static/layer/layer.js"></script>
+{% load my_tags %}
+<h3>添加二级(菜单)权限</h3>
+<form action="">
+    {% csrf_token %}
+    名称:<input type="text" name="permission_name" value="">&nbsp;&nbsp;
+    对应(菜单)权限:
+    <select name="menu_id" id="">
+        <option value="">请选择</option>
+        {% for row in menu_QuerySet %}
+        <option value="{{ row.id }}">{{ row.menu_name }}</option>
+        {% endfor %}
+    </select>&nbsp;&nbsp;
+    规则:<input type="text" name="permission_rule" value="">
+    <input type="button" name="dosubmit" id="dosubmit" value="添加">
+</form>
+<script>
+    $('#dosubmit').click(function () {
+       $.post('{% url "back:permission_add_second" mid=mid %}',$('form').serialize(),function(data){
+            if(data.status==1){
+                layer.msg(data.info,function () {
+                   location.href = '{% url "back:permission_list" %}?mid={{ mid }}'
+                });
+            }else {
+                layer.msg(data.info)
+            }
+       },'json') ;
+    });
+</script>

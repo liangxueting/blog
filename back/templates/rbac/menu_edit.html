@@ -1,0 +1,22 @@
+<script type="text/javascript" src="/static/back/js/jquery.js"></script>
+<script type="text/javascript" src="/static/layer/layer.js"></script>
+{% load my_tags %}
+<h3>修改一级菜单</h3>
+<form action="">
+    {% csrf_token %}
+    <input type="text" name="menu_name" value="{{ menu.menu_name }}">
+    <input type="button" name="dosubmit" id="dosubmit" value="保存">
+</form>
+<script>
+    $('#dosubmit').click(function () {
+       $.post('{% url "back:menu_edit" mid=mid %}',$('form').serialize(),function(data){
+            if(data.status==1){
+                layer.msg(data.info,function () {
+                   location.href = '{% url "back:menu_list" %}'
+                });
+            }else {
+                layer.msg(data.info)
+            }
+       },'json') ;
+    });
+</script>

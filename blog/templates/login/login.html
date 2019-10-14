@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/layer/layer.js"></script>
+</head>
+<body>
+<form>
+    {% csrf_token %}
+    <div>用户：<input type="text" value="" name="username"></div>
+{#    <div>{{ res.info }}</div>#}
+    <div>密码：<input type="password" value="" name="pwd"></div>
+{#    <div>{{ res.info.1 }}</div>#}
+    <div>验证码：<input type="text" name="valid_code"><img width="270" height="40" id="valid_code_img" src="/blog/get_valid_code_img/" alt="" onclick="this.src='/blog/get_valid_code_img/?'+Math.random()"></div>
+{#    <div>{{ res.info.2 }}</div>#}
+    <div><input type="button" value="登录" name="dosubmit"></div>
+</form>
+</body>
+<script>
+    $(document).ready(function () {
+       $('input[name="dosubmit"]').click(function () {
+            $.post("{% url 'blog:login' %}",$('form').serialize(),function (data) {
+                if(data.status==2){
+                    layer.msg(data['info']);
+                }else if(data.status==1){
+                    layer.msg(data['info'],function () {
+                        location.href="{% url 'blog:index' %}"
+                    });
+
+                }else {
+                    layer.msg(data['info']);
+                }
+
+
+            },'json');
+       });
+    });
+</script>
+</html>

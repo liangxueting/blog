@@ -1,0 +1,341 @@
+﻿<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <meta charset=utf-8>
+    <meta name=viewport content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>用户注册 - 博客天下</title>
+    <link rel="shortcut icon" href=//common.cnblogs.com/favicon.ico type=image/x-icon>
+    <script src="/static/js/nav-iconfont.js"></script>
+    <link href="/static/css/_layout.min.css" rel=stylesheet>
+    <link rel=stylesheet href="/static/css/signup.min.css">
+    <script src="/static/js/jquery-1.8.2.js"></script>
+    <script src="/static/layer/layer.js"></script>
+</head>
+<body>
+<nav class="navbar fixed-top navbar-expand-md nav-box navbar-dark" role=navigation>
+    <div class=container>
+        <!--<a href=//www.cnblogs.com class="navbar-brand no-style">-->
+        <!--<svg class=icon-logo>-->
+            <!--<use xlink:href=#icon-logo></use>-->
+        <!--</svg>-->
+        <!--<svg class=icon-txt-logo>-->
+            <!--<use xlink:href=#icon-txt-logo></use>-->
+        <!--</svg>-->
+    <!--</a>-->
+        <button class=navbar-toggler type=button data-toggle=collapse data-target=#navbarSupportedContent
+                aria-controls=navbarSupportedContent aria-expanded=false aria-label="Toggle navigation"><span
+                class=navbar-toggler-icon></span></button>
+        <div class="collapse navbar-collapse" id=navbarSupportedContent>
+            <ul class="nav navbar-nav navbar-right nav-main-icon ml-auto">
+                <li class=nav-item><a class=nav-link href='{% url "blog:index" %}' class=no-style>
+                    <svg class=icon-home>
+                        <use xlink:href=#icon-home></use>
+                    </svg>
+                    首页 </a>
+                <li class=nav-item><a class=nav-link href='{% url "blog:newtext" %}'>
+                    <svg>
+                        <use xlink:href=#icon-signin></use>
+                    </svg>
+                    登录 </a>
+                <li class=nav-item><a class=nav-link href='javascript:;' id=signUpMenu>
+                    <svg>
+                        <use xlink:href=#icon-signup></use>
+                    </svg>
+                    注册 </a>
+                <li class=nav-item><a class=nav-link href='javascript:;' id=assistMenu>
+                    <svg>
+                        <use xlink:href=#icon-assist></use>
+                    </svg>
+                    帮助 </a>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container body-box">
+    <div class="mx-auto d-block body-content">
+        <div class="d-none d-sm-block title-top col-sm-12">注册新用户
+            <hr class=head-hr>
+        </div>
+        <div class=row>
+            <form class="form-horizontal col-md-8 form-padding" role=form id=registerForm method=post onsubmit="return false">
+                {% csrf_token %}
+                <div class="form-space-top d-none d-sm-block"></div>
+                <div class="form-group form-row">
+                <div class="col-sm-2 control-label"><label class=w4-2 for=Email>邮箱</label></div>
+                    <div class="col-sm-10 has-feedback"><input class=form-control placeholder=需要通过邮件激活帐户 type=email
+                                                               data-val=true data-val-checkemailpostfix=不支持该邮箱后缀
+                                                               data-val-email=邮箱格式错误 data-val-length=邮箱地址不能超过120个字符
+                                                               data-val-length-max=120 data-val-regex=邮箱地址错误或不支持
+                                                               data-val-regex-pattern="[\w!#\$%&amp;'\*\+\-\/=\^_`{\|}~.]+@([\w-]+\.)+(com|net|cn|org|me|cc|biz)$"
+                                                               data-val-remote="'邮箱' is invalid."
+                                                               data-val-remote-additionalfields=*.Email
+                                                               data-val-remote-url=/Account/CheckEmail
+                                                               data-val-required=请输入邮箱地址 id=Email name=member_email> <span
+                            class="text-danger field-validation-valid" data-valmsg-for=Email
+                            data-valmsg-replace=true></span></div>
+                </div>
+                <div class="form-group form-row">
+                    <div class="col-sm-2 control-label"><label class=w4-4 for=PhoneNum>手机号码</label></div>
+                    <div class="col-sm-10 has-feedback">
+                    <div class=mobile-control-wrap><input class="form-control country-code" type=text data-val=true
+                                                              data-val-maxlength=国家代码格式错误 data-val-maxlength-max=4
+                                                              data-val-regex=国家代码格式错误 data-val-regex-pattern=^\+\d{1,3}$
+                                                              data-val-required=请输入国家代码 id=CountryCode name=CountryCode
+                                                              value=+86> <input class="form-control mobile-num"
+                                                                                placeholder=激活帐户需要手机短信验证 type=text
+                                                                                data-val=true
+                                                                                data-val-remote="'手机号码' is invalid."
+                                                                                data-val-remote-additionalfields=*.PhoneNum
+                                                                                data-val-remote-url=/Account/CheckPhoneNum
+                                                                                data-val-required=请输入手机号码 id=PhoneNum
+                                                                                name=member_tel ></div>
+                        <span class="text-danger field-validation-valid" data-valmsg-for=CountryCode
+                              data-valmsg-replace=true></span> <span class="text-danger field-validation-valid"
+                                                                     data-valmsg-for=PhoneNum
+                                                                     data-valmsg-replace=true></span></div>
+                </div>
+                <div class="form-group form-row">
+                <div class="col-sm-2 control-label"><label class=w4-2 for=Email></label></div>
+                    <div class="col-sm-7 has-feedback"><input class=form-control placeholder=请输入手机验证码 value="" name="phoneCode"><span class="text-danger field-validation-valid" data-valmsg-for=phone data-valmsg-replace=true></span></div>
+                    <div class="col-sm-3 has-feedback"><input type="button" name="yanzhengma" value="获取验证码"></div>
+                    <div class="col-sm-3 has-feedback"><input type="button" name="Nowyanzhengma" style="display: none;"></div>
+                </div>
+                  <div class="form-group form-row">
+                    <div class="col-sm-2 control-label"><label class=w4-4 for=LoginName>图形验证</label></div>
+                    <div class="col-sm-3 has-feedback"><input class=form-control placeholder=请输入图形验证码 type=text
+                                                               data-val=true data-val-length=不合要求，至少2个字符，最多30个字符
+                                                               data-val-length-max=30 data-val-length-min=2
+                                                               data-val-nospace=登录用户名不能包含空格
+                                                               data-val-remote="'登录名称' is invalid."
+                                                               data-val-remote-additionalfields=*.LoginName
+                                                               data-val-remote-url=/Account/CheckLoginName
+                                                               data-val-required=请输入登录用户名 id=LoginName name=chartCode>
+                        <span class="text-danger field-validation-valid" data-valmsg-for=LoginName
+                              data-valmsg-replace=true></span>
+                    </div>
+                    <div class="col-sm-6 has-feedback" ><img width="270" height="30" id="valid_code_img" src="/blog/get_valid_code_img/" alt="" onclick="this.src='/blog/get_valid_code_img/?'+Math.random()"></div>
+                </div>
+
+                <div class="form-group form-row">
+                    <div class="col-sm-2 control-label"><label class=w4-4 for=LoginName>登录名称</label></div>
+                    <div class="col-sm-10 has-feedback"><input class=form-control placeholder=登录用户名，不少于4个字符 type=text
+                                                               data-val=true data-val-length=不合要求，至少2个字符，最多30个字符
+                                                               data-val-length-max=30 data-val-length-min=2
+                                                               data-val-nospace=登录用户名不能包含空格
+                                                               data-val-remote="'登录名称' is invalid."
+                                                               data-val-remote-additionalfields=*.LoginName
+                                                               data-val-remote-url=/Account/CheckLoginName
+                                                               data-val-required=请输入登录用户名 id=LoginName name=member_name>
+                        <span class="text-danger field-validation-valid" data-valmsg-for=LoginName
+                              data-valmsg-replace=true></span></div>
+                </div>
+                <div class="form-group form-row">
+                    <div class="col-sm-2 control-label"><label class=w4-4 for=DisplayName>显示名称</label></div>
+                    <div class="col-sm-10 has-feedback"><input class=form-control placeholder=即昵称，不少于2个字符 type=text
+                                                               data-val=true data-val-length=不合要求，至少2个字符，最多20个字符
+                                                               data-val-length-max=20 data-val-length-min=2
+                                                               data-val-regex=不能包含空格、@、:和，不能以._结尾
+                                                               data-val-regex-pattern=^(?!.*[@:：\s]).*[^._]$
+                                                               data-val-remote="'显示名称' is invalid."
+                                                               data-val-remote-additionalfields=*.DisplayName
+                                                               data-val-remote-url=/Account/CheckDisplayName
+                                                               data-val-required=请输入显示名称 id=DisplayName
+                                                               name=member_nickname> <span
+                            class="text-danger field-validation-valid" data-valmsg-for=DisplayName
+                            data-valmsg-replace=true></span></div>
+                </div>
+                <div class="form-group form-row">
+                    <div class="col-sm-2 control-label"><label class=w4-2 for=Password>密码</label></div>
+                    <div class="col-sm-10 has-feedback"><input class=form-control placeholder=至少8位，必须包含字母、数字、特殊字符
+                                                               type=password data-val=true
+                                                               data-val-length=不合要求，密码长度要求8-30位 data-val-length-max=30
+                                                               data-val-length-min=8 data-val-nospace=密码不能包含空格
+                                                               data-val-regex=密码必须包含字母、数字和特殊字符的组合
+                                                               data-val-regex-pattern="^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9])[-0-9a-zA-Z~!@#$%^&amp;*`_=+\]\[{}:;\\|:;&#34;'/?>.&lt;,\(\)]{8,30}$"
+                                                               data-val-required=请输入密码 id=Password name=member_pwd> <span
+                            class="text-danger field-validation-valid" data-valmsg-for=Password
+                            data-valmsg-replace=true></span></div>
+                </div>
+                <div class="form-group form-row">
+                    <div class="col-sm-2 control-label"><label class=w4-4 for=ConfirmPassword>确认密码</label></div>
+                    <div class="col-sm-10 has-feedback"><input class=form-control placeholder=请输入确认密码 type=password
+                                                               data-val=true data-val-equalto=确认密码错误
+                                                               data-val-equalto-other=*.Password id=ConfirmPassword
+                                                               name=r_pwd> <span
+                            class="text-danger field-validation-valid" data-valmsg-for=ConfirmPassword
+                            data-valmsg-replace=true></span></div>
+                </div>
+                <div class="form-group form-row">
+                    <div class="offset-sm-2 col-sm-10"><span class="col-sm-12 ajax-error"></span><button id=submitBtn type=button class="btn ladda-button mx-auto d-block cnblogs-btn-blue"
+                                data-style=zoom-in><span class=ladda-label>注册</span></button>
+                    </div>
+                </div>
+                <div class="offset-sm-2 register-sign"><span class=asterisk>*</span> 点击 “注册” 按钮，即表示您同意并愿意遵守 <a
+                        class=look-agreeon target=_blank href=//passport.cnblogs.com/agreement.html>用户协议</a>。
+                </div>
+
+            </form>
+            <div class="d-none d-md-block col-md-4 side-img-box">
+                <div class=side-line>
+                    <div></div>
+                </div>
+                <img src="/static/picture/registersideimg.png"></div>
+        </div>
+    </div>
+</div>
+<br style=clear:both>
+<div id=footer_bottom class=text-center>
+    <div><a href=//www.cnblogs.com/AboutUS.aspx class="d-none d-md-inline">关于博客天下</a> <a
+            href=//www.cnblogs.com/ContactUs.aspx class="d-none d-md-inline">联系我们</a> ©2004-2019<a
+            href="//www.cnblogs.com/">博客天下</a> <span class="d-none d-md-inline">保留所有权利</span> Powered by ASP.NET Core on
+        Linux
+    </div>
+</div>
+
+{#<script src="/static/js/signup.min.js"></script>#}
+</body>
+<!--<script src="js/_layout.min.js"></script>-->
+
+<script>
+    $(document).ready(function (){
+        {#当点击获取验证码的按钮时，获取手机验证码#}
+        $('input[name="yanzhengma"]').click(function () {
+            getSmsCode();
+        });
+        {#封装函数#}
+        function getSmsCode() {
+          {#定义一个手机变量  #}
+            var tel = $.trim($('input[name="member_tel"]').val());
+            {#编写一个手机号正则表达式#}
+            var reguser = /^[1][3-8]\d{9}$/;
+            {#前端判断手机号#}
+            if(tel ==''){
+                layer.msg('请输入手机号');
+                return false;
+            }else if(!reguser.test(tel)){
+                layer.msg('手机号码格式不正确');
+                return false;
+            }
+            {#将页面符合条件的信息通过ajax提交后台#}
+            $.post('{% url "blog:enroll" %}',{'tel':tel,'sendSms':1, "csrfmiddlewaretoken":"{{ csrf_token }}"},function(data){
+                if(data['status' == 1]){
+                    timeout();
+                    layer.msg(data['info']);
+                }else {
+                    layer.msg(data['info']);
+                }
+            },'json');
+        }
+
+        {#定义一个计时器用来显示手机验证码的发送时间#}
+        var sec = 60;
+        var interval = null;
+        {#开启定时器#}
+        function timeout() {
+            interval = setInterval(run,1000);
+        }
+
+        {#定义一个定时器的函数#}
+        function run() {
+            if(sec>=1){
+                sec--;
+                $('input[name="yanzhengma"]').hide();
+                $('input[name="Nowyanzhengma"]').show();
+                $('input[name="Nowyanzhengma"]').val("倒计时("+sec+")s");
+            }else {
+                $('input[name="yanzhengma"]').show();
+                $('input[name="Nowyanzhengma"]').hide();
+                clearInterval(interval);
+                sec = 60;
+            }
+        }
+
+        {#当点击登录按钮时候，把form表单里的内容提交到后台#}
+        $('#submitBtn').click(function () {
+            {#获取前端页数据信息#}
+            var member_email = $('input[name="member_email"]').val();
+            var member_tel = $('input[name="member_tel"]').val();
+            var phoneCode = $('input[name="phoneCode"]').val();
+            var chartCode = $('input[name="chartCode"]').val();
+            var member_name = $('input[name="member_name"]').val();
+            var member_nickname = $('input[name="member_nickname"]').val();
+            var member_pwd = $('input[name="member_pwd"]').val();
+            var r_pwd = $('input[name="r_pwd"]').val();
+            {#正则#}
+            var email_reguser = /^\w+@\w.+[a-z]{2,}$/;  {# 邮箱 #}
+            var reguser = /^[1][3-8]\d{9}$/;            {# 手机号 #}
+            var user_reguser = /^\w{6,18}$/;            {# 账号，密码 #}
+
+            {#前端验证#}
+             if(member_email == ""){
+                 layer.msg('请输入邮箱');
+                return false
+            }else  if(!email_reguser.test(member_email)){
+                layer.msg('邮箱格式不正确');
+                return false
+            }else if(member_tel == '' || !reguser.test(member_tel)){
+                 getSmsCode();
+                 return false
+            }else if(phoneCode == ''){
+                layer.msg('请输入验证码');
+                return false
+            }else if(chartCode == ''){
+                layer.msg('请输入图形验证码');
+                return false
+            }else if(member_name == ''){
+                layer.msg('登录名称不能为空');
+                return false
+            }else if(!user_reguser.test(member_name)){
+                  layer.msg('登录名称格式不正确');
+                return false
+            }else if(member_nickname == ''){
+                layer.msg('请输入显示名称');
+                return false
+            }else if(member_pwd == '' || r_pwd == ""){
+                layer.msg('密码或确认密码不能为空');
+                return false
+            }else if(!user_reguser.test(member_pwd)){
+                  layer.msg('密码格式不正确');
+                return false
+             }
+            {#var dosubmit = {"dosubmit":1};#}
+            {#$('form').serialize().append(dosubmit);#}
+            $.post('{% url "blog:enroll" %}',{
+                "member_email":member_email,
+                "member_tel":member_tel,
+                "phoneCode":phoneCode,
+                "chartCode":chartCode,
+                "member_name":member_name,
+                "member_nickname":member_nickname,
+                "member_pwd":member_pwd,
+                "r_pwd":r_pwd,
+                "dosubmit":1,
+                "csrfmiddlewaretoken":"{{ csrf_token }}",
+            },function (data) {
+                {#console.log(data['status'],data['info']);#}
+                if (data['status'] == 0){
+                    arr={'member_name':'登录名称','member_pwd':'密码','r_pwd':'确认密码','__all__':''};
+
+                    $.each(data['info'],function (key,value) {
+                        {#遍历键值对#}
+                        layer.msg(arr[key]+value[0]);
+                        return false;
+                     });
+                }else if(data['status'] == 1){
+                    layer.msg(data['info'],function () {
+                        location.href="{% url 'blog:index' %}"
+                    });
+                    return false
+                }else if(data['status'] == 2){
+                    layer.msg(data['info']);
+                    return false
+                }else if(data['status'] == 3){
+                    layer.msg(data['info']);
+                    return false
+                }
+            },'json');
+
+        });
+    });
+</script>
+</html>

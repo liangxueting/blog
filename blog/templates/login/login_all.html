@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>综合登录界面</title>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/layer/layer.js"></script>
+</head>
+<body>
+<form action="">
+    <div>用 户 名：<input type="text" value="" name="username" placeholder="请输入8-16位字符的用户名"></div>
+    <br>
+    <div>密   码：   &nbsp;<input type="password" value="" name="pwd" placeholder="请输入8-16位的用户密码"></div>
+    <br>
+    <div>手机验证：<input type="text" name="user_tel" placeholder="请输入手机号" value=""></div>
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" placeholder="请输入手机验证码" name="validcode" value="">
+        <input type="button" value="获取验证码" id="yanzhengma">
+        <input type="button" id="nowYanzhengma" style="display:none;">
+    </div>
+     <br>
+    <div>图形验证：<input type="text" name="valid_code" value=""><img width="270" height="40" id="valid_code_img" src="/blog/get_valid_code_img/" alt="" onclick="this.src='/blog/get_valid_code_img/?'+Math.random()"></div>
+    <div><input type="button" value="登录" id="btn_login" ></div>
+
+</form>
+
+</body>
+<script>
+    {#定义一个两个点击事件#}
+    $(document).ready(function () {
+        {#定义一个获取验证码的事件，用于获取验证码进行校验#}
+        {#首先校验验证码是否正确，在进行用户名和密码的校验#}
+        {#定义一个获取短信验证码的函数#}
+
+      {#点击获取短信码#}
+        $('#yanzhengma').click(function () {
+            getSmsCode();
+        });
+
+        {#定义一个定时器用来显示手机验证码的发送时间#}
+        var sec = 60;
+        var interval = null;
+        {#开启定时器#}
+        function timeout() {
+            interval = setInterval(run,1000);
+        }
+        {#定义一个定时器的函数#}
+        function run() {
+            if (sec >=1 ){
+                sec--;
+                $('#yanzhengma').hide();
+                $('#nowYanzhengma').show();
+                $('#nowYanzhengma').val("倒计时("+sec+")s");
+            }else {
+                $('#yanzhengma').show();
+                $('#nowYanzhengma').hide();
+                clearInterval(interval);
+                sec = 60;
+
+
+            }
+        }
+
+        function getSmsCode() {
+            {#定义一个获取input框中的手机号的变量#}
+            var user_tel = $.trim($('input[name="user_tel"]').val());
+            {#定义一个正则表达式用来判断手机号是否正确#}
+            var reguser = /^[1][3-8]\d{9}$/;
+            {#当手机号不存在时，提示客户输入手机号#}
+            if(user_tel == ""){
+                layer.msg("请填写手机号");
+                return false;
+            }
+            if(!reguser.test(user_tel)){
+                layer.msg("手机号码格式不正确");
+                return false;
+            }
+            $.post('{% url "blog:login_all" %}',{'user_tel':user_tel,'sendSms':1, "csrfmiddlewaretoken":"{{ csrf_token }}"},function (data) {
+                if (data['status'] == 1){
+                    timeout();
+                    layer.msg(data['info']);
+                }else {
+                    layer.msg(data['info']);
+                }
+            },'json');
+
+        }
+
+        {#定义一个提交按钮事件用于校验用户名密码等是否正确#}
+        {#当点击提交按钮时#}
+        $('#btn_login').click(function () {
+            var username = $('input[name="username"]').val();
+            var pwd = $("input[name='pwd']").val();
+            var user_tel = $("input[name='user_tel']").val();
+            var valid_code = $("input[name='valid_code']").val();
+            var validcode = $("input[name='validcode']").val();
+            if (username == '' || pwd == '') {
+                layer.msg('账号或密码不能为空')
+            } else if (user_tel == "") {
+                getSmsCode();
+                 return false
+            } else if (validcode == '') {
+                layer.msg('验证码不存在');
+                 return false
+            }
+            else if (valid_code == '') {
+                layer.msg('图形验证码不存在');
+                return false
+            }
+            $.post('{% url "blog:login_all" %}',{'user_tel':user_tel,'validcode':validcode,'dosubmit':1,"csrfmiddlewaretoken":"{{ csrf_token }}","valid_code":valid_code,'username':username,'pwd':pwd},function (data) {
+                if(data.status==0){
+                    layer.msg(data.info);
+                }else if(data.status==1){
+                    layer.msg(data.info,function () {
+                         location.href="{% url 'blog:index' %}"
+                    });
+                }else if(data.status==2){
+                    layer.msg(data.info,function () {
+                         location.href="{% url 'blog:enroll' %}"
+                    });
+                }
+
+            },'json');
+
+        })
+    });
+</script>
+
+</html>
